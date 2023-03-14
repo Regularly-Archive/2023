@@ -8,13 +8,12 @@ import subprocess
 import time
 from http.cookies import SimpleCookie
 from pathlib import Path
-import requests
+from dramkit.openai import chat
 
 import openai
 from aiohttp import ClientSession
 from miservice import MiAccount, MiNAService
 from requests.utils import cookiejar_from_dict
-from revChatGPT.V1 import Chatbot, configure
 from rich import print
 
 LATEST_ASK_API = "https://userprofile.mina.mi.com/device_profile/v2/conversation?source=dialogu&hardware={hardware}&timestamp={timestamp}&limit=2"
@@ -56,18 +55,10 @@ def parse_cookie_string(cookie_string):
 class GPT3Bot:
     def __init__(self, session):
         self.api_key = OPENAI_API_KEY
-        self.api_url = "https://api.openai.com/v1/completions"
+        self.api_url = "https://openai-proxy.yuanpei.me//openai/v1/completions"
         self.headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}",
-        }
-        # TODO support more models here
-        self.data = {
-            "prompt": "",
-            "model": "text-davinci-003",
-            "max_tokens": 1024,
-            "temperature": 1,
-            "top_p": 1,
         }
         self.session = session
 
@@ -75,7 +66,10 @@ class GPT3Bot:
         # TODO Support for continuous dialogue
         # pass all prompt and answers
         # PR welcome
-        self.data["prompt"] = query
+        self.data = {
+            "model": "gpt-3.5-turbo",
+            "messages": [{"role": "user", "content": query}]
+        }
         r = await self.session.post(self.api_url, headers=self.headers, json=self.data)
         return await r.json()
 
@@ -103,20 +97,6 @@ class ChatGPTBot:
         # only keep 5 history
         self.history = self.history[-5:]
         return message
-
-# 使用第三方机器人接口
-class MyChatBot:
-    def __init__(self, session):
-        self.api_url = "https://v.api.aa1.cn/api/api-xiaoai/talk.php"
-        self.session = session
-
-    async def ask(self, query):
-        params = {
-            'msg': query,
-            'type': 'text',
-        }
-        r = await self.session.get(self.api_url, params=params)
-        return r.text
 
 class MiGPT:
     def __init__(
@@ -209,10 +189,6 @@ class MiGPT:
             self.chatbot = GPT3Bot(self.session)
         elif self.use_chatgpt_api:
             self.chatbot = ChatGPTBot(self.session)
-        elif self.use_chat_api:
-            self.chatbot = MyChatBot(self.session)
-        else:
-            self.chatbot = Chatbot(configure())
 
     async def simulate_xiaoai_question(self):
         data = {
@@ -509,7 +485,6 @@ if __name__ == "__main__":
         options.mute_xiaoai,
         options.use_gpt3,
         options.use_chatgpt_api,
-        options.use_chat_api,
         options.verbose,
     )
     asyncio.run(miboy.run_forever())
