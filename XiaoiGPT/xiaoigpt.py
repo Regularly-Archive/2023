@@ -266,11 +266,14 @@ class MiGPT:
 
     async def ask_gpt3(self, query):
         data = await self.chatbot.ask(query)
+        data = data['data']
+        if (data == None):
+            print("No reply from gpt3")
         choices = data.get("choices")
         if not choices:
             print("No reply from gpt3")
         else:
-            message = choices[0].get("text", "")
+            message = choices[0]["message"]["content"]
             message = self._normalize(message)
             return message
 
