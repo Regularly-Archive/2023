@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  front_app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: front_app
+    ports:
+      - "50001:80"
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+    networks:
+      envoymesh:
+networks:
+  envoymesh: {}
