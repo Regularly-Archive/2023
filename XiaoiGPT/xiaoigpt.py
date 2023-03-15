@@ -9,6 +9,7 @@ import time
 from http.cookies import SimpleCookie
 from pathlib import Path
 from dramkit.openai import chat
+from dotenv import load_dotenv, find_dotenv
 
 import openai
 from aiohttp import ClientSession
@@ -20,24 +21,19 @@ LATEST_ASK_API = "https://userprofile.mina.mi.com/device_profile/v2/conversation
 COOKIE_TEMPLATE = "deviceId={device_id}; serviceToken={service_token}; userId={user_id}"
 
 HARDWARE_COMMAND_DICT = {
-    "LX06": "5-1",
-    "L05B": "5-3",
-    "S12A": "5-1",
-    "LX01": "5-1",
-    "L06A": "5-1",
-    "LX04": "5-1",
-    "L05C": "5-3",
-    "L17A": "7-3",
-    # add more here
+    "LX06": {"tts":"5-1", "state":"3-1", "pause":"3-2" },
+    "L05B": {"tts":"5-1", "state":"3-1", "pause":"3-3" },
+    "X08E": {"tts":"5-1", "state":"3-1", "pause":"3-3" }
 }
+
 MI_USER = ""
 MI_PASS = ""
 OPENAI_API_KEY = ""
 KEY_WORD = "帮我"
-PROMPT = "请用100字以内回答"
+PROMPT = "请用100字以内的内容回答"
 
 # simulate the response from xiaoai server by type the input.
-CLI_INTERACTIVE_MODE = False
+CLI_INTERACTIVE_MODE = True
 
 
 ### HELP FUNCTION ###
@@ -121,7 +117,12 @@ class MiGPT:
         self.service_token = ""
         self.cookie = cookie
         self.use_command = use_command
-        self.tts_command = HARDWARE_COMMAND_DICT.get(hardware, "5-1")
+        command = HARDWARE_COMMAND_DICT.get(hardware, None)
+        if (command == None):
+            raise Exception("请在字典中配置硬件型号，并从 https://home.miot-spec.com/ 获取对应的指令代码.")
+        self.tts_command = command["tts"]
+        self.state_command = command["state"]
+        self.pause_command = command["pause"]
         self.conversation_id = None
         self.parent_id = None
         self.miboy_account = None
@@ -298,22 +299,30 @@ class MiGPT:
         return ""
 
     async def get_if_xiaoai_is_playing(self):
-        playing_info = await self.mina_service.player_get_status(self.device_id)
-        # WTF xiaomi api
-        is_playing = (
-            json.loads(playing_info.get("data", {}).get("info", "{}")).get("status", -1)
-            == 1
-        )
-        return is_playing
+        if not self.use_command: 
+            playing_info = await self.mina_service.player_get_status(self.device_id)
+            # WTF xiaomi api
+            is_playing = (
+                json.loads(playing_info.get("data", {}).get("info", "{}")).get("status", -1)
+                == 1
+            )
+            return is_playing
+        else:
+            output = subprocess.check_output(["micli", self.state_command])
+            output = output.decode()
+            return output.find("1") >= 0 
 
     async def stop_if_xiaoai_is_playing(self):
         is_playing = await self.get_if_xiaoai_is_playing()
         if is_playing:
-            # stop it
-            await self.mina_service.player_pause(self.device_id)
+            if not self.use_command: 
+                # stop it
+                await self.mina_service.player_pause(self.device_id)
+            else:
+                subprocess.check_output(["micli", self.pause_command])
 
     async def run_forever(self):
-        print(f"Running xiaogpt now, 用`{KEY_WORD}`开头来提问")
+        print(f"Running XiaoiGPT now, 用`{KEY_WORD}`开头来提问")
         async with ClientSession() as session:
             await self.init_all_data(session)
             while 1:
@@ -348,7 +357,7 @@ class MiGPT:
                         # waiting for xiaoai speaker done
                         if not self.mute_xiaoai:
                             await asyncio.sleep(8)
-                        await self.do_tts("正在问GPT请耐心等待")
+                        await self.do_tts("正在询问GPT请耐心等待")
                         try:
                             print(
                                 "以下是小爱的回答: ",
@@ -357,11 +366,11 @@ class MiGPT:
                                 .get("text"),
                             )
                         except:
-                            print("小爱没回")
+                            print("小爱紧张地说不出话来了")
                         message = await self.ask_gpt(query)
                         # tts to xiaoai with ChatGPT answer
-                        print("以下是GPT的回答: " + message)
-                        await self.do_tts(message)
+                        print("以下是ChatGPT的回答: " + message)
+                        await self.do_tts("以下是ChatGPT的回答: " + message)
                         if self.mute_xiaoai:
                             while 1:
                                 is_playing = await self.get_if_xiaoai_is_playing()
@@ -375,6 +384,9 @@ class MiGPT:
 
 
 if __name__ == "__main__":
+    # 支持 .env 文件配置加载
+    load_dotenv(find_dotenv())
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--hardware",
