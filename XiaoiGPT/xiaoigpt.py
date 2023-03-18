@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 import argparse
 import asyncio
 import json
@@ -8,7 +8,6 @@ import subprocess
 import time
 from http.cookies import SimpleCookie
 from pathlib import Path
-from dramkit.openai import chat
 from dotenv import load_dotenv, find_dotenv
 
 import openai
@@ -23,7 +22,7 @@ COOKIE_TEMPLATE = "deviceId={device_id}; serviceToken={service_token}; userId={u
 HARDWARE_COMMAND_DICT = {
     "LX06": {"tts":"5-1", "state":"3-1", "pause":"3-2" },
     "L05B": {"tts":"5-1", "state":"3-1", "pause":"3-3" },
-    "X08E": {"tts":"5-1", "state":"3-1", "pause":"3-3" }
+    "X08E": {"tts":"7-3", "state":"3-1", "pause":"3-3" }
 }
 
 MI_USER = ""
@@ -33,7 +32,7 @@ KEY_WORD = "帮我"
 PROMPT = "请用100字以内的内容回答"
 
 # simulate the response from xiaoai server by type the input.
-CLI_INTERACTIVE_MODE = True
+CLI_INTERACTIVE_MODE = False
 
 
 ### HELP FUNCTION ###
@@ -251,6 +250,7 @@ class MiGPT:
         message = message.replace(" ", "--")
         message = message.replace("\n", "，")
         message = message.replace('"', "，")
+        message = message.replace('\r', "，")
         return message
 
     async def ask_gpt(self, query):
@@ -357,20 +357,20 @@ class MiGPT:
                         # waiting for xiaoai speaker done
                         if not self.mute_xiaoai:
                             await asyncio.sleep(8)
-                        await self.do_tts("正在询问GPT请耐心等待")
+                        await self.do_tts("正在询问ChatGPT请耐心等待")
                         try:
                             print(
-                                "以下是小爱的回答: ",
+                                "[小爱]: ",
                                 last_record.get("answers")[0]
                                 .get("tts", {})
                                 .get("text"),
                             )
                         except:
-                            print("小爱紧张地说不出话来了")
+                            print("[小爱]: 我紧张地说不出话来了")
                         message = await self.ask_gpt(query)
                         # tts to xiaoai with ChatGPT answer
-                        print("以下是ChatGPT的回答: " + message)
-                        await self.do_tts("以下是ChatGPT的回答: " + message)
+                        print("[ChatGPT]: ", message)
+                        await self.do_tts("以下是ChatGPT的答案，" + message)
                         if self.mute_xiaoai:
                             while 1:
                                 is_playing = await self.get_if_xiaoai_is_playing()
@@ -485,6 +485,7 @@ if __name__ == "__main__":
     # if set
     MI_USER = options.account or env.get("MI_USER") or MI_USER
     MI_PASS = options.password or env.get("MI_PASS") or MI_PASS
+    KEY_WORD = env.get("KEY_WORD") or KEY_WORD
     OPENAI_API_KEY = options.openai_key or env.get("OPENAI_API_KEY")
     if options.use_gpt3:
         if not OPENAI_API_KEY:
