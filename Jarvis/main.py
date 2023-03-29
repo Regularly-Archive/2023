@@ -12,7 +12,7 @@ def recognize_speech():
         print('Please speak:')
         audio = r.listen(source)
     try:
-        text = r.recognize_google(audio, language='zh-CN')
+        text = r.recognize_sphinx(audio, language='en-US')
         print('You said:', text)
         return text
     except Exception as e:
@@ -36,15 +36,19 @@ def recognize_image():
     cv2.destroyAllWindows()
 
 # 主程序
-speak('你好，请问有什么可以帮助您的？')
+print('你好，请问有什么可以帮助您的？')
+# speak('你好，请问有什么可以帮助您的？')
 while True:
     text = recognize_speech()
     if text == '退出':
         break
     elif text == '打开相机':
-        speak('好的，请看摄像头')
+        # speak('好的，请看摄像头')
+        print('好的，请看摄像头')
         recognize_image()
     elif text == '你叫什么名字':
-        speak('我是小助手')
+        print('我是小助手')
+        # speak('我是小助手')
     else:
-        speak('对不起，我不明白您的意思，请您再说一遍。')
+        print('对不起，我不明白您的意思，请您再说一遍。')
+        # speak('对不起，我不明白您的意思，请您再说一遍。')
