@@ -15,3 +15,4 @@ requests==2.28.2
 sounddevice==0.4.6
 SpeechRecognition==3.10.0
 urllib3==1.26.15
+pocketsphinx

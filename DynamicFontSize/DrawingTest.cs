@@ -8,6 +8,7 @@ namespace DynamicFontSize;
 public class DrawingTest
 {
     private const int MIN_FONT_SIZE = 8;
+    private const int MAX_FONT_SIZE = 32;
 
     [TestMethod]
     [DataRow(200,200,"我们是共产主义接班人，继承革命先辈的光荣传统，爱祖国爱人民")]
@@ -20,23 +21,27 @@ public class DrawingTest
         Graphics g = Graphics.FromImage(bitmap);
         g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit; ;
 
+        // 绘制圆形
         var center = new Point(width / 2, height / 2);
         var radius = width / 2 * 0.6f;
         var rect = new RectangleF(center.X - radius, center.Y - radius, radius * 2, radius * 2);
         var pen = new Pen(Color.Red, 1.50f);
         g.DrawEllipse(pen, rect);
 
+        // 绘制矩形
         var textPosX = center.X - radius * 0.75f;
         var textHeight = Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(radius * 0.75f, 2));
         var textPosY = center.Y - textHeight;
         var textRect = new RectangleF(textPosX, (float)textPosY, radius * 0.75f * 2f, (float)textHeight * 2f);
         g.DrawRectangle(pen, textRect);
 
+        // 绘制文字
         var font = new Font("宋体", 16);
         var fontSize = ScaleFontSizeByContainerSize(g, text, font, new SizeF(textRect.Width, textRect.Height));
         g.DrawString(text, new Font("宋体", fontSize), new SolidBrush(Color.Blue), textRect);
         g.DrawString($"{width}x{height},fontSize={fontSize}", new Font("宋体", fontSize), new SolidBrush(Color.Blue), new PointF(0, 0)); 
 
+        // 绘制环形文字
         float fontSize1 = ScaleFontSizeByPerimeter(g, text, font, radius + 10, 360);
         Font fontToFit1 = new Font("宋体", fontSize1, FontStyle.Bold, GraphicsUnit.Pixel);
         var totalAngle = Math.PI * 2;
@@ -95,7 +100,7 @@ public class DrawingTest
         var measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         while (measuredSize.Width > perimeter)
         {
-            fontSize -= 0.5f;
+            fontSize -= 0.1f;
             if (fontSize <= MIN_FONT_SIZE) break;
             measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         }
@@ -104,7 +109,8 @@ public class DrawingTest
         measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         while (measuredSize.Width < perimeter)
         {
-            fontSize += 0.5f;
+            fontSize += 0.1f;
+            if (fontSize >= MAX_FONT_SIZE) break;
             measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         }
 
