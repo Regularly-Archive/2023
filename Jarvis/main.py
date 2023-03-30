@@ -2,6 +2,7 @@ import speech_recognition as sr
 import pyttsx3
 import cv2
 
+
 # 初始化语音识别和语音合成客户端
 r = sr.Recognizer()
 engine = pyttsx3.init()

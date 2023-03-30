@@ -1,0 +1,1 @@
+sphinx_kws -ifile fileids.txt -kws kws.txt -di . -do .
