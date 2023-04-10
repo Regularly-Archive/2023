@@ -14,7 +14,7 @@ PICOVOICE_API_KEY = env.get("PICOVOICE_API_KEY")
 
 # 初始化语音合成引擎
 tts = Pyttsx3TTS()
-picowakeword = PicoWakeWord(PICOVOICE_API_KEY, '*.ppn')
+picowakeword = PicoWakeWord(PICOVOICE_API_KEY, 'Jarvis_en_windows_v2_1_0.ppn')
 baiduasr = BaiduASR(BAIDU_ASR_APP_ID, BAIDU_ASR_API_KEY, BAIDU_ASR_SECRET_KEY)
 
 # 主程序
@@ -22,9 +22,11 @@ print('你好，请问有什么可以帮助您的？')
 while True:
     wake_word_index = picowakeword.detect_wake_word()
     if wake_word_index >= 0:
-        result = baiduasr.recoginze(True)
+        tts.speak('我在')
+        result = baiduasr.recoginze(False)
         if result == None:
-            print('没听清，请再说一遍')
+            tts.speak('没听清，请再说一遍')
         else:
-            print(result)
+            tts.speak(result)
+            
     
