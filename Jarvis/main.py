@@ -1,55 +1,30 @@
-import speech_recognition as sr
 import pyttsx3
-import cv2
+from speech.speech2text import BaiduASR
+from speech.wakeword import PicoWakeWord
+from speech.text2speech import Pyttsx3TTS
+from dotenv import load_dotenv, find_dotenv
+from os import environ as env
 
+# 初始化环境变量
+load_dotenv(find_dotenv())
+BAIDU_ASR_APP_ID = env.get("BAIDU_ASR_APP_ID")
+BAIDU_ASR_API_KEY = env.get("BAIDU_ASR_API_KEY")
+BAIDU_ASR_SECRET_KEY = env.get("BAIDU_ASR_SECRET_KEY")
+PICOVOICE_API_KEY = env.get("PICOVOICE_API_KEY")
 
-# 初始化语音识别和语音合成客户端
-r = sr.Recognizer()
-engine = pyttsx3.init()
-
-# 语音识别函数
-def recognize_speech():
-    with sr.Microphone() as source:
-        print('Please speak:')
-        audio = r.listen(source)
-    try:
-        text = r.recognize_sphinx(audio, language='en-US')
-        print('You said:', text)
-        return text
-    except Exception as e:
-        print('Error:', e)
-        return ''
-
-# 语音合成函数
-def speak(text):
-    engine.say(text)
-    engine.runAndWait()
-
-# 图像识别函数
-def recognize_image():
-    cap = cv2.VideoCapture(0)
-    while True:
-        ret, frame = cap.read()
-        cv2.imshow('frame', frame)
-        if cv2.waitKey(1) == ord('q'):
-            break
-    cap.release()
-    cv2.destroyAllWindows()
+# 初始化语音合成引擎
+tts = Pyttsx3TTS()
+picowakeword = PicoWakeWord(PICOVOICE_API_KEY, '*.ppn')
+baiduasr = BaiduASR(BAIDU_ASR_APP_ID, BAIDU_ASR_API_KEY, BAIDU_ASR_SECRET_KEY)
 
 # 主程序
 print('你好，请问有什么可以帮助您的？')
-# speak('你好，请问有什么可以帮助您的？')
 while True:
-    text = recognize_speech()
-    if text == '退出':
-        break
-    elif text == '打开相机':
-        # speak('好的，请看摄像头')
-        print('好的，请看摄像头')
-        recognize_image()
-    elif text == '你叫什么名字':
-        print('我是小助手')
-        # speak('我是小助手')
-    else:
-        print('对不起，我不明白您的意思，请您再说一遍。')
-        # speak('对不起，我不明白您的意思，请您再说一遍。')
+    wake_word_index = picowakeword.detect_wake_word()
+    if wake_word_index >= 0:
+        result = baiduasr.recoginze(True)
+        if result == None:
+            print('没听清，请再说一遍')
+        else:
+            print(result)
+    
