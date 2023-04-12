@@ -1,6 +1,6 @@
-from aiohttp import ClientSession
+import requests
 
-class GPT3Bot:
+class ChatGPTBot:
     def __init__(self, session, openai_api_key, openai_api_endpoint='https://api.openai.com/v1/completions'):
             self.api_key = openai_api_key
             self.api_url = openai_api_endpoint
@@ -10,10 +10,10 @@ class GPT3Bot:
             }
             self.session = session
 
-    async def ask(self, query):
+    def ask(self, query):
         self.data = {
             "model": "gpt-3.5-turbo",
             "messages": [{"role": "user", "content": query}]
         }
-        r = await self.session.post(self.api_url, headers=self.headers, json=self.data)
-        return await r.json()
+        r = self.session.post(self.api_url, headers=self.headers, data=self.data)
+        return r.json()
