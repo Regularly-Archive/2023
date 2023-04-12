@@ -15,5 +15,5 @@ class ChatGPTBot:
             "model": "gpt-3.5-turbo",
             "messages": [{"role": "user", "content": query}]
         }
-        r = self.session.post(self.api_url, headers=self.headers, data=self.data)
+        r = self.session.post(self.api_url, headers=self.headers, json=self.data)
         return r.json()
