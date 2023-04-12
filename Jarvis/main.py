@@ -57,8 +57,9 @@ async def main():
                     print("No reply from gpt3")
                 else:
                     message = choices[0]["message"]["content"]
-                    tts.speak(message)
                     print('Jarvis: ' + message)
+                    tts.speak(message)
+                    
 
 if __name__ == '__main__':
     asyncio.run(main())
