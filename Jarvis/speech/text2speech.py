@@ -60,4 +60,4 @@ if __name__ == "__main__":
     tts = BaiduTTS(APP_ID, API_KEY, SECRET_KEY)
     tts.speak('欢迎使用延长自助终端管理系统')
     tts = PaddleSpeechTTS()
-    tts.speak('To be or not to be, this is a question')
+    tts.speak('王凯荣，你是猴子请来的逗比吗')
