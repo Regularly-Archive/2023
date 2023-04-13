@@ -3,6 +3,7 @@ from playsound import playsound
 import pyttsx3
 import os
 from pathlib import Path
+from paddlespeech.cli.tts.infer import TTSExecutor
 
 class BaiduTTS:
     def __init__(self, APP_ID, API_KEY, SECRET_KEY):
@@ -26,7 +27,6 @@ class BaiduTTS:
         else:
             print("语音合成失败", result)
         
-
 class Pyttsx3TTS:
     def __init__(self):
         self.engine = pyttsx3.init()
@@ -41,6 +41,17 @@ class Pyttsx3TTS:
         self.engine.say(text)
         self.engine.runAndWait()
 
+class PaddleSpeechTTS:
+
+    def __init__(self):
+        self.executor = TTSExecutor()
+
+    def speak(self, text=""):
+        filePath = os.path.join(Path.home(), "audio.mp3")
+        self.executor(text=text, output=filePath, am='fastspeech2_male')
+        playsound(filePath)
+    
+
 
 if __name__ == "__main__":
     APP_ID = '32200779'
@@ -48,3 +59,5 @@ if __name__ == "__main__":
     SECRET_KEY = 'qTN2xoKMjl8pvdlPDHYm7GnsN02C1W2r'
     tts = BaiduTTS(APP_ID, API_KEY, SECRET_KEY)
     tts.speak('欢迎使用延长自助终端管理系统')
+    tts = PaddleSpeechTTS()
+    tts.speak('To be or not to be, this is a question')
