@@ -1,5 +1,6 @@
 from aip import AipSpeech
 import speech_recognition as sr
+from paddlespeech.cli.asr.infer import ASRExecutor
 import time
 
 
@@ -20,14 +21,15 @@ class BaiduASR:
             else:
                 return ''
 
-    def recoginze(self, keep_audio_file: bool = False):
+    def recoginze(self, keep_audio_file: bool = False, timeout=60):
         with sr.Microphone(sample_rate=16000) as source:
             self.recoginzer.adjust_for_ambient_noise(source, duration=1)
-            audio = self.recoginzer.listen(source, timeout=15, phrase_time_limit=2)
+            audio = self.recoginzer.listen(source, timeout=60, phrase_time_limit=2)
+
+            timestamp = time.strftime('%Y-%m-%d-%H_%M_%S', time.localtime(time.time()))
+            file_name = f"./{timestamp}.wav"
 
             if keep_audio_file and audio != None:
-                timestamp = time.strftime('%Y-%m-%d-%H_%M_%S', time.localtime(time.time()))
-                file_name = f"./{timestamp}.wav"
                 with open(file_name, "wb") as f:
                     f.write(audio.get_wav_data())
 
@@ -39,11 +41,38 @@ class BaiduASR:
                 else:
                     return ''
 
+class PaddleSpeechASR:
+
+    def __init__(self):
+        self.recoginzer = sr.Recognizer()
+        self.executor = ASRExecutor()
+
+    def recognize_file(self, filePath: str, lang: str = 'zh'):
+        return self.executor(audio_file=filePath, lang=lang)
+
+    def recoginze(self, keep_audio_file: bool = False, timeout=60):
+        with sr.Microphone(sample_rate=16000) as source:
+            self.recoginzer.adjust_for_ambient_noise(source, duration=1)
+            audio = self.recoginzer.listen(source, timeout=timeout, phrase_time_limit=2)
+
+            timestamp = time.strftime('%Y-%m-%d-%H_%M_%S', time.localtime(time.time()))
+            file_name = f"./{timestamp}.wav"
+            
+            if keep_audio_file and audio != None:
+
+                with open(file_name, "wb") as f:
+                    f.write(audio.get_wav_data())
+
+            if audio != None:
+                return self.executor(audio_file=file_name)
+
 
 if __name__ == '__main__':
-    APP_ID = ''
-    API_KEY = ''
-    SECRET_KEY = ''
-    baiduasr = BaiduASR(APP_ID, API_KEY, SECRET_KEY)
-    result = baiduasr.recoginze(True)
+    # APP_ID = ''
+    # API_KEY = ''
+    # SECRET_KEY = ''
+    # baiduasr = BaiduASR(APP_ID, API_KEY, SECRET_KEY)
+    # result = baiduasr.recoginze(True)
+    paddleASR = PaddleSpeechASR()
+    result = paddleASR.recoginze(True)
     print(result)
