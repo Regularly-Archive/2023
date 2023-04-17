@@ -9,6 +9,12 @@ class ChatGPTBot:
                 "Authorization": f"Bearer {self.api_key}",
             }
             self.session = session
+    
+    def normalize(self, message):
+        message = message.replace("\n", "，")
+        message = message.replace('"', "，")
+        message = message.replace('\r', "，")
+        return message
 
     def ask(self, query):
         self.data = {
@@ -16,4 +22,12 @@ class ChatGPTBot:
             "messages": [{"role": "user", "content": query}]
         }
         r = self.session.post(self.api_url, headers=self.headers, json=self.data)
-        return r.json()
+        data = r.json()
+        choices = data.get("choices")
+        if not choices:
+            return None
+        else:
+            message = choices[0]["message"]["content"]
+            message = self.normalize(message)
+            return message
+    
