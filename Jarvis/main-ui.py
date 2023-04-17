@@ -1,3 +1,4 @@
+from signal import signal
 import sys
 import time
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QThread
@@ -9,12 +10,14 @@ from widgets.matplotlibWidget import MatplotlibWidget
 from widgets.typeWriterLabel import TypeWriterLabel
 from baseJarvisHandler import BaseJarvisHandler
 from playsound import playsound
+import json
+from conf.appConstants import JarvisEventType
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.handler = UiJarvisHandler(self)
+        self.handler = UiJarvisHandler()
         self.thread = Worker(None, self.handler)
         self.setWindowTitle("J.A.R.V.I.S")
         desktop = QApplication.desktop()
@@ -47,9 +50,9 @@ class MainWindow(QMainWindow):
         self.wave_plot.startAudio()
         self.wave_plot.show()
         # 显示窗口
+        self.thread.signal.connect(self.handle_signal)
         self.thread.start()
         self.show()
-        
         
     def set_sub_label(self, text):
         self.sub_label.setText(text)
@@ -57,37 +60,69 @@ class MainWindow(QMainWindow):
     def switch_power_status(self):
         self.awake_button.switch_power_status()
 
+    def handle_signal(self, data):
+        payload = json.loads(data)
+        if payload['evt'] == JarvisEventType.Awake:
+            self.switch_power_status()
+            self.set_sub_label('正在聆听...')
+        elif payload['evt'] == JarvisEventType.InputFailed:
+            self.set_sub_label(payload['text'])
+        elif payload['evt'] == JarvisEventType.Inputed:
+            self.set_sub_label(payload['text']) 
+        elif payload['evt'] == JarvisEventType.OutputFailed:
+            self.set_sub_label(payload['text']) 
+        elif payload['evt'] == JarvisEventType.Outputed:
+            self.set_sub_label(payload['text'])    
+
 class UiJarvisHandler(BaseJarvisHandler):
-    def __init__(self, window):
+    def __init__(self):
         super().__init__(None)
-        self.window = window
+        self.signal = None
+
+    def set_signal(self, signal):
+        self.signal = signal
 
     def onInputFailed(self):
-        self.tts_engine.speak('抱歉，我没有听清，请您再说一遍')
-        self.window.set_sub_label('抱歉，我没有听清，请您再说一遍')
+        text = '抱歉，我没有听清，请您再说一遍'
+        self.tts_engine.speak(text)
+        payload = {'evt':JarvisEventType.InputFailed, 'text': text}
+        if self.signal != None:
+            self.signal.emit(json.dumps(payload))
 
     def onInputed(self, text):
         super().onInputed(text)
-        self.window.set_sub_label(text)
+        payload = {'evt':JarvisEventType.Inputed, 'text': text}
+        if self.signal != None:
+            self.signal.emit(json.dumps(payload))
 
     def onOutputFailed(self):
-        super().onInputFailed()
-        print("Jarvis: No reply from ChatGPT")
+        super().onOutputFailed()
+        text = 'Jarvis: No reply from ChatGPT'
+        payload = {'evt':JarvisEventType.OutputFailed, 'text': text}
+        if self.signal != None:
+            self.signal.emit(json.dumps(payload))
 
     def onOutputed(self, text):
-        self.window.set_sub_label(text)
         self.tts_engine.speak(text)
+        payload = {'evt':JarvisEventType.Outputed, 'text': text}
+        if self.signal != None:
+            self.signal.emit(json.dumps(payload))
     
     def onAwake(self):
         super().onAwake()
         playsound('.\\resources\\ding.wav')
-        self.window.switch_power_status()
+        payload = {'evt':JarvisEventType.Awake, 'text': ''}
+        if self.signal != None:
+            self.signal.emit(json.dumps(payload))
 
 class Worker(QThread):
+    signal = pyqtSignal(str)
+
     def __init__(self, parent=None, handler=None):
         super(Worker, self).__init__(parent)
         self.handler = handler
- 
+        self.handler.set_signal(self)
+        
     def __del__(self):
         self.wait()
  
