@@ -1,9 +1,10 @@
 import requests
 
 class ChatGPTBot:
-    def __init__(self, session, openai_api_key, openai_api_endpoint='https://api.openai.com/v1/completions'):
+    def __init__(self, session, openai_api_key, openai_api_endpoint='https://api.openai.com/v1/completions', prompt=""):
             self.api_key = openai_api_key
             self.api_url = openai_api_endpoint
+            self.prompt = prompt
             self.headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self.api_key}",
@@ -17,6 +18,8 @@ class ChatGPTBot:
         return message
 
     def ask(self, query):
+        if self.prompt != None and self.prompt != '':
+             query = self.prompt + query
         self.data = {
             "model": "gpt-3.5-turbo",
             "messages": [{"role": "user", "content": query}]

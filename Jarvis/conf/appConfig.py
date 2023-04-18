@@ -14,6 +14,7 @@ def load_config_from_env(env_file=''):
         'PICOVOICE_API_KEY': env.get("PICOVOICE_API_KEY"),
         'OPENAI_API_ENDPOINT': env.get("OPENAI_API_ENDPOINT"),
         'OPENAI_API_KEY': env.get("OPENAI_API_KEY"),
+        'OPENAI_API_PROMPT': env.get("OPENAI_API_PROMPT"),
         'PLAY_WELCOME_VOICE': True
     }
 
