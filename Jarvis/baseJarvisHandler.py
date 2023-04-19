@@ -2,7 +2,7 @@ from speech.speech2text import PaddleSpeechASR
 from speech.wakeword import PicoWakeWord
 from speech.text2speech import PaddleSpeechTTS
 from talk.openai import ChatGPTBot
-from talk.chineseCorrector import NLPCorrector
+from talk.contentCorrector import NLPCorrector
 from os import environ as env
 from conf.appConstants import welcome
 from conf.appConfig import load_config_from_env

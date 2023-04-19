@@ -97,7 +97,9 @@ class MainWindow(QMainWindow):
             self.set_sub_label(payload['text'])
 
     def manual_awake(self):
+        self.switch_power_status()
         self.handler.awake_by_manual()
+        
 
 class UiJarvisHandler(BaseJarvisHandler):
     def __init__(self, window):
@@ -106,9 +108,9 @@ class UiJarvisHandler(BaseJarvisHandler):
 
     def onGreet(self, text):
         super().onGreet(text)
-        # payload = {'evt': JarvisEventType.Greet, 'text': text }
-        # if self.signal != None:
-        #     self.signal.emit(json.dumps(payload))
+        payload = {'evt': JarvisEventType.Greet, 'text': text }
+        if self.signal != None:
+            self.signal.emit(json.dumps(payload))
     
     def onInputFailed(self):
         super().onInputFailed()
@@ -157,6 +159,9 @@ class UiJarvisHandler(BaseJarvisHandler):
 
     def set_signal(self, signal):
         self.signal = signal
+
+    def awake_by_manual(self):
+        super().awake_by_manual()
 
 class Worker(QThread):
 
