@@ -2,8 +2,8 @@ import random
 from enum import IntEnum
 
 welcome_tips = [
-    'Welcome home sir',
-    'For you sir, always',
+    'Welcome home, sir. This is Jarvis, who is your artificial intelligence assistant to help you work and live better.',
+    "It's my proud to say that I serve for you, sir, always",
     'Always at your service sir',
 ]
 

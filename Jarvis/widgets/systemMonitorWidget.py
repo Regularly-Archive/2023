@@ -57,7 +57,8 @@ class SystemMonitorWidget(QWidget):
 
     def update_metrics(self):
         net_io_counters = psutil.net_io_counters()
-        net_speed = (net_io_counters.bytes_sent + net_io_counters.bytes_recv - self.last_net_io_counters.bytes_sent - self.last_net_io_counters.bytes_recv) / 1024 / 1024
+        # net_speed = (net_io_counters.bytes_sent + net_io_counters.bytes_recv - self.last_net_io_counters.bytes_sent - self.last_net_io_counters.bytes_recv) / 1024 / 1024
+        net_speed = (net_io_counters.bytes_sent - self.last_net_io_counters.bytes_sent) / 1024 / 1024
         self.last_net_io_counters = net_io_counters
         mem_info = psutil.virtual_memory()
         mem_percent = mem_info.percent
