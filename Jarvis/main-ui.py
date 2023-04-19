@@ -7,10 +7,11 @@ from PIL import Image, ImageDraw, ImageQt
 from widgets.circleButton import CircleButton
 from widgets.matplotlibWidget import MatplotlibWidget
 from widgets.typeWriterLabel import TypeWriterLabel
+from widgets.systemMonitorWidget import SystemMonitorWidget
 from baseJarvisHandler import BaseJarvisHandler
-from playsound import playsound
 import json, datetime
 from conf.appConstants import JarvisEventType
+from playsound import playsound
 
 class MainWindow(QMainWindow):
 
@@ -43,15 +44,22 @@ class MainWindow(QMainWindow):
         self.clock_timer = QTimer(self)
         self.clock_timer.timeout.connect(self.refresh_system_clock)
         self.clock_timer.start(1000)
+        # 顶部系统参数监控区域
+        self.system_metrics = SystemMonitorWidget(self)
+        self.system_metrics.setFixedHeight(75)
+        self.system_metrics.setFixedWidth(int(self.width() / 4))
+        self.system_metrics.move(int(self.width() - self.system_metrics.width()), 5)
+        self.system_metrics.show()
         # 底部字幕区域
-        self.sub_label = TypeWriterLabel("", self)
+        self.sub_label = TypeWriterLabel("", self, 45)
         self.sub_label.setStyleSheet("color: white; font-size: 24px; border: 0px solid black;")
         self.sub_label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.sub_label.setFixedHeight(75)
         self.sub_label.setFixedWidth(self.width())
-        self.sub_label.setFont(QFont("Source Code Pro",9))
+        self.sub_label.setFont(QFont("Source Code Pro", 9))
         self.sub_label.move(0, self.height() - self.sub_label.height())
-        self.sub_label.setBackgroundColor(QColor(255, 255, 255, 0))  # 设置背景
+        self.sub_label.setBackgroundColor(QColor(255, 255, 255, 0))
+        self.sub_label.setText('J.A.R.V.I.S 正在启动，请稍后...')
         # 手动唤醒开关
         self.awake_button = CircleButton(self, 99)
         self.awake_button.move(self.width() / 2 - 52, 559)
@@ -98,17 +106,18 @@ class UiJarvisHandler(BaseJarvisHandler):
 
     def onGreet(self, text):
         super().onGreet(text)
-        payload = {'evt': JarvisEventType.Greet, 'text': text }
-        if self.signal != None:
-            self.signal.emit(json.dumps(payload))
+        # payload = {'evt': JarvisEventType.Greet, 'text': text }
+        # if self.signal != None:
+        #     self.signal.emit(json.dumps(payload))
     
     def onInputFailed(self):
         super().onInputFailed()
         text = '抱歉，我没有听清，请您再说一遍'
+        self.tts_engine.speak(text)
         payload = {'evt': JarvisEventType.InputFailed, 'text': text }
         if self.signal != None:
             self.signal.emit(json.dumps(payload))
-        self.tts_engine.speak(text)
+        
 
     def onInputed(self, text):
         super().onInputed(text)
@@ -119,23 +128,24 @@ class UiJarvisHandler(BaseJarvisHandler):
     def onOutputFailed(self):
         super().onInputFailed()
         text = "No reply from ChatGPT"
+        self.tts_engine.speak(text)
         payload = {'evt': JarvisEventType.OutputFailed, 'text': text }
         if self.signal != None:
             self.signal.emit(json.dumps(payload))
-        self.tts_engine.speak(text)
+        
 
     def onOutputed(self, text):
         super().onOutputed(text)
-
+        self.tts_engine.speak(text)
         payload = {'evt': JarvisEventType.Outputed, 'text': text }
         if self.signal != None:
             self.signal.emit(json.dumps(payload))
-        self.tts_engine.speak(text)
+        
     
     def onAwake(self):
         super().onAwake()
-        playsound('.\\resources\\ding.wav')
-        payload = {'evt': JarvisEventType.Awake, 'text': '正在聆听...' }
+        playsound('.\\resources\\ding.wav', block=False)
+        payload = {'evt': JarvisEventType.Awake, 'text': '正在聆听，请讲话...' }
         if self.signal != None:
             self.signal.emit(json.dumps(payload))
 

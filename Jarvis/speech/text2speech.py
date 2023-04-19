@@ -4,6 +4,7 @@ import pyttsx3
 import os
 from pathlib import Path
 from paddlespeech.cli.tts.infer import TTSExecutor
+import threading
 
 class BaiduTTS:
     def __init__(self, APP_ID, API_KEY, SECRET_KEY):
@@ -23,7 +24,7 @@ class BaiduTTS:
         if not isinstance(result, dict):
             with open(filePath, "wb") as f:
                 f.write(result)
-            playsound(filePath)
+            playsound(filePath, block=False)
         else:
             print("语音合成失败", result)
         
@@ -46,12 +47,10 @@ class PaddleSpeechTTS:
     def __init__(self):
         self.executor = TTSExecutor()
 
-    def speak(self, text=""):
+    def speak(self, text="", lang='mix', model='fastspeech2_male'):
         filePath = os.path.join(Path.home(), "audio.mp3")
-        self.executor(text=text, output=filePath, am='fastspeech2_male')
-        playsound(filePath)
-    
-
+        self.executor(text=text, output=filePath, am=model, lang=lang)
+        playsound(filePath, block=False)
 
 if __name__ == "__main__":
     APP_ID = '32200779'
@@ -60,4 +59,4 @@ if __name__ == "__main__":
     tts = BaiduTTS(APP_ID, API_KEY, SECRET_KEY)
     tts.speak('欢迎使用延长自助终端管理系统')
     tts = PaddleSpeechTTS()
-    tts.speak('王凯荣，你是猴子请来的逗比吗')
+    tts.speak('欢迎使用延长自助终端管理系统')

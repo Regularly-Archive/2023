@@ -15,7 +15,9 @@ def load_config_from_env(env_file=''):
         'OPENAI_API_ENDPOINT': env.get("OPENAI_API_ENDPOINT"),
         'OPENAI_API_KEY': env.get("OPENAI_API_KEY"),
         'OPENAI_API_PROMPT': env.get("OPENAI_API_PROMPT"),
-        'PLAY_WELCOME_VOICE': True
+        'PLAY_WELCOME_VOICE': bool(env.get("PLAY_WELCOME_VOICE")),
+        'ENABLE_CHINESE_CORRECT': bool(env.get('ENABLE_CHINESE_CORRECT')),
+        'ENABLE_SEMANTIC_ANALYSIS': bool(env.get('ENABLE_SEMANTIC_ANALYSIS'))
     }
 
     return config
