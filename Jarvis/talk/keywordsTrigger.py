@@ -1,12 +1,16 @@
 import functools
 import webbrowser
 import datetime
+import jieba
 
 def trigger(keywords):
     def outerWrapper(func):
         def wrapper(*args, **kwargs):
-            if args[0] in keywords:
-                return func(*args, **kwargs)
+            words = jieba.cut(args[0], cut_all=False)
+            print(list(words))
+            for word in words:
+                if word in keywords:
+                    return func(*args, **kwargs)      
         return wrapper
     return outerWrapper
 
@@ -26,10 +30,17 @@ def get_time(input):
     time = now.strftime('%H时%M分')
     print(f'当前时间是{prefix}{time}')
 
+@trigger(keywords=['搜索', '检索', '查询'])
+def search(input):
+    webbrowser.open(f'https://cn.bing.com/search?q={input}')
+
+
 if __name__ == '__main__':
     input = '打开百度'
     open_browser(input)
-    input = '几点了'
+    input = '现在几点了'
     get_time(input)
+    input = '检索鬼灭之刃'
+    search(input)
 
 
