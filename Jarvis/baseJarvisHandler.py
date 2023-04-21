@@ -2,7 +2,8 @@ from speech.speech2text import PaddleSpeechASR
 from speech.wakeword import PicoWakeWord
 from speech.text2speech import PaddleSpeechTTS
 from talk.openai import ChatGPTBot
-# from talk.contentCorrector import NLPCorrector
+from talk.contentCorrector import ChatGPTCorrector
+from talk.intentExtractor import ChatGPTExtractor
 from os import environ as env
 from conf.appConstants import welcome
 from conf.appConfig import load_config_from_env
@@ -25,7 +26,14 @@ class BaseJarvisHandler:
             self.config['OPENAI_API_KEY'], 
             self.config['OPENAI_API_ENDPOINT'] + '/v1/chat/completions',
             self.config['OPENAI_API_PROMPT'])
-        # self.corrector = NLPCorrector()
+        self.chineses_corrector = ChatGPTCorrector(
+            self.config['OPENAI_API_KEY'], 
+            self.config['OPENAI_API_ENDPOINT'] + '/v1/chat/completions',
+        )
+        self.semantic_extractor = ChatGPTExtractor(
+            self.config['OPENAI_API_KEY'], 
+            self.config['OPENAI_API_ENDPOINT'] + '/v1/chat/completions',
+        )
     
     def onGreet(self, text):
         self.logger.info(f"Jarvis greet you with '{text}'")
@@ -68,9 +76,14 @@ class BaseJarvisHandler:
                     self.onInputFailed()
                     continue
                 else:
-                    # if self.config['ENABLE_CHINESE_CORRECT']:
-                    #     input = self.currector.currect(input)
+                    # 当开启中文纠错特性时，对输入内容进行纠正
+                    if self.config['ENABLE_CHINESE_CORRECT']:
+                        input = self.chineses_corrector.currect(input)
                     self.onInputed(input)
+                    # 当开启语义理解特性时，对输入意图进行分析
+                    output = None
+                    if self.config['ENABLE_SEMANTIC_ANALYSIS']:
+                        output = self.semantic_extractor.extract(input)
                     output = self.chat_bot.ask(input)
                     if output== None or output == '':
                         self.onOutputFailed()

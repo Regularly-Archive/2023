@@ -1,4 +1,7 @@
-import openai
+if __name__ == '__main__':
+    import openai
+else:
+    from . import openai
 import requests
 import json
 
@@ -56,5 +59,13 @@ if __name__ == '__main__':
     print(result)
 
     text = '现在几点了'
+    result = gptExtractor.extract(text)
+    print(result)
+
+    text = '帮我打开有道词典'
+    result = gptExtractor.extract(text)
+    print(result)
+
+    text = '帮我给张三写一封信'
     result = gptExtractor.extract(text)
     print(result)

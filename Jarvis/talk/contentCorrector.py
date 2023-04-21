@@ -1,5 +1,5 @@
 import pycorrector
-import openai
+from . import openai
 import requests
 
 class NLPCorrector:
