@@ -12,9 +12,8 @@ class ChatGPTBot:
             self.session = session
     
     def normalize(self, message):
-        message = message.replace("\n", "，")
-        message = message.replace('"', "，")
-        message = message.replace('\r', "，")
+        message = message.replace("\n", "")
+        message = message.replace('\r', "")
         return message
 
     def ask(self, query):

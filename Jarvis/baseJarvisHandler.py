@@ -2,7 +2,7 @@ from speech.speech2text import PaddleSpeechASR
 from speech.wakeword import PicoWakeWord
 from speech.text2speech import PaddleSpeechTTS
 from talk.openai import ChatGPTBot
-from talk.contentCorrector import NLPCorrector
+# from talk.contentCorrector import NLPCorrector
 from os import environ as env
 from conf.appConstants import welcome
 from conf.appConfig import load_config_from_env
@@ -25,7 +25,7 @@ class BaseJarvisHandler:
             self.config['OPENAI_API_KEY'], 
             self.config['OPENAI_API_ENDPOINT'] + '/v1/chat/completions',
             self.config['OPENAI_API_PROMPT'])
-        self.corrector = NLPCorrector()
+        # self.corrector = NLPCorrector()
     
     def onGreet(self, text):
         self.logger.info(f"Jarvis greet you with '{text}'")
@@ -36,6 +36,7 @@ class BaseJarvisHandler:
 
     def onInputed(self, text):
         self.logger.info(f"Jarvis had recognized follwing information '{text}'")
+        self.manual_awake = False
 
     def onOutputFailed(self):
         self.logger.info(f"Jarvis can't response due to unknow reason")
@@ -49,8 +50,7 @@ class BaseJarvisHandler:
     def onIdle(self):
         self.logger.info(f"Jarvis is idle now")
         if self.manual_awake:
-            self.manual_awake = True
-        time.sleep(1)
+            self.manual_awake = False
     
     def awake_by_manual(self):
         self.manual_awake = True
@@ -58,7 +58,6 @@ class BaseJarvisHandler:
     def run(self):
         if self.config['PLAY_WELCOME_VOICE']:
             tips = welcome()
-            self.tts_engine.speak(tips, lang='mix')
             self.onGreet(tips)
         while True:
             wake_word_index = self.awake_engine.detect_wake_word()
@@ -67,16 +66,17 @@ class BaseJarvisHandler:
                 input = self.asr_engine.recoginze(keep_audio_file=True, timeout=60)
                 if input == None or input == '':
                     self.onInputFailed()
+                    continue
                 else:
-                    if self.config['ENABLE_CHINESE_CORRECT']:
-                        input = self.currector.currect(input)
+                    # if self.config['ENABLE_CHINESE_CORRECT']:
+                    #     input = self.currector.currect(input)
                     self.onInputed(input)
                     output = self.chat_bot.ask(input)
                     if output== None or output == '':
                         self.onOutputFailed()
+                        continue
                     else:
                         self.onOutputed(output)
-                    self.onIdle()
                 
         
             

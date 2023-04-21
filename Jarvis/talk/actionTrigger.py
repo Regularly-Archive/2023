@@ -23,7 +23,7 @@ def has_trigger(func):
 def open_browser(input):
     webbrowser.open('https://www.baidu.com/')
 
-@trigger(keywords=['当前时间', '几点了'])
+@trigger(keywords=['询问时间', '几点了'])
 def get_time(input):
     now = datetime.datetime.now()
     prefix = '下午' if now.hour > 12 else '下午'
@@ -33,6 +33,11 @@ def get_time(input):
 @trigger(keywords=['搜索', '检索', '查询'])
 def search(input):
     webbrowser.open(f'https://cn.bing.com/search?q={input}')
+
+def playmusic(input):
+
+    #http://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s=孤勇者&type=1&offset=0&total=true&limit=2
+    #http://music.163.com/song/media/outer/url?id=（将id号）.mp3
 
 
 if __name__ == '__main__':

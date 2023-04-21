@@ -11,12 +11,13 @@ from widgets.systemMonitorWidget import SystemMonitorWidget
 from baseJarvisHandler import BaseJarvisHandler
 import json, datetime
 from conf.appConstants import JarvisEventType
-from playsound import playsound
+from speech.async_playsound import playsound_async
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        self._is_ready = False
         self.handler = UiJarvisHandler(self)
         self.thread = Worker(None, self.handler)
         self.setWindowTitle("J.A.R.V.I.S")
@@ -51,9 +52,9 @@ class MainWindow(QMainWindow):
         self.system_metrics.move(int(self.width() - self.system_metrics.width()), 5)
         self.system_metrics.show()
         # 底部字幕区域
-        self.sub_label = TypeWriterLabel("", self, 45)
+        self.sub_label = TypeWriterLabel("", self, 50)
         self.sub_label.setStyleSheet("color: white; font-size: 24px; border: 0px solid black;")
-        self.sub_label.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.sub_label.setAlignment(Qt.AlignVCenter)
         self.sub_label.setFixedHeight(75)
         self.sub_label.setFixedWidth(self.width())
         self.sub_label.setFont(QFont("Source Code Pro", 9))
@@ -92,22 +93,29 @@ class MainWindow(QMainWindow):
             self.switch_power_status()
             self.set_sub_label(payload['text'])
         elif payload['evt'] == JarvisEventType.Idle:
-            self.set_sub_label('')
+            pass
         else:
             self.set_sub_label(payload['text'])
 
     def manual_awake(self):
-        self.switch_power_status()
-        self.handler.awake_by_manual()
+        if self._is_ready:
+            self.awake_button.switch_power_status()
+            self.handler.awake_by_manual()
+
+    def set_system_status(self, is_ready):
+        self._is_ready = is_ready
         
 
 class UiJarvisHandler(BaseJarvisHandler):
     def __init__(self, window):
         super().__init__(None)
         self.signal = None
+        self.window = window
 
     def onGreet(self, text):
         super().onGreet(text)
+        self.window.set_system_status(True)
+        self.tts_engine.speak(text)
         payload = {'evt': JarvisEventType.Greet, 'text': text }
         if self.signal != None:
             self.signal.emit(json.dumps(payload))
@@ -142,11 +150,12 @@ class UiJarvisHandler(BaseJarvisHandler):
         payload = {'evt': JarvisEventType.Outputed, 'text': text }
         if self.signal != None:
             self.signal.emit(json.dumps(payload))
+        self.onIdle()
         
     
     def onAwake(self):
         super().onAwake()
-        playsound('.\\resources\\ding.wav', block=False)
+        playsound_async('.\\resources\\ding.wav')
         payload = {'evt': JarvisEventType.Awake, 'text': '正在聆听，请讲话...' }
         if self.signal != None:
             self.signal.emit(json.dumps(payload))

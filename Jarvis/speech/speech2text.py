@@ -1,7 +1,8 @@
 from aip import AipSpeech
 import speech_recognition as sr
 from paddlespeech.cli.asr.infer import ASRExecutor
-import time
+from pathlib import Path
+import os, time
 
 
 class BaiduASR:
@@ -27,7 +28,8 @@ class BaiduASR:
             audio = self.recoginzer.listen(source, timeout=60, phrase_time_limit=2)
 
             timestamp = time.strftime('%Y-%m-%d-%H_%M_%S', time.localtime(time.time()))
-            file_name = f"./{timestamp}.wav"
+            file_name = f"{timestamp}.wav"
+            file_name = os.path.join(Path.home(), file_name)
 
             if keep_audio_file and audio != None:
                 with open(file_name, "wb") as f:
@@ -50,10 +52,10 @@ class PaddleSpeechASR:
     def recognize_file(self, filePath: str, lang: str = 'zh'):
         return self.executor(audio_file=filePath, lang=lang)
 
-    def recoginze(self, keep_audio_file: bool = False, timeout=60):
+    def recoginze(self, keep_audio_file: bool = True, timeout=60, phrase_time_limit=2):
         with sr.Microphone(sample_rate=16000) as source:
             self.recoginzer.adjust_for_ambient_noise(source, duration=1)
-            audio = self.recoginzer.listen(source, timeout=timeout, phrase_time_limit=2)
+            audio = self.recoginzer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
 
             timestamp = time.strftime('%Y-%m-%d-%H_%M_%S', time.localtime(time.time()))
             file_name = f"./{timestamp}.wav"
