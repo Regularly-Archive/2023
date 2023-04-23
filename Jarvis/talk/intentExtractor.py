@@ -3,7 +3,7 @@ if __name__ == '__main__':
 else:
     from . import openai
 import requests
-import json
+import json, logging
 
 intent_extractor_prompt = '''
     我想让你扮演我的自然语言处理工具，当我告诉你一句话的时候，你可以对它进行分词、词法分析、词性分析、上下文分析、主题建模/抽取，
@@ -36,10 +36,15 @@ class ChatGPTExtractor:
         self.session = requests.session()
         self.prompt = intent_extractor_prompt
         self.bot = openai.ChatGPTBot(self.session, openai_api_key, openai_api_endpoint, self.prompt)
+        self.logger = logging.getLogger('ChatGPTExtractor')
+        self.logger.setLevel(logging.DEBUG)
 
     def extract(self, text):
         response = self.bot.ask(text)
-        return json.loads(response)
+        result = json.loads(response)
+        formated_result = json.dumps(result, ensure_ascii=False)
+        self.logger.debug(f'extracting intent via ChatGPT -> {formated_result}')
+        return result
 
 
 if __name__ == '__main__':

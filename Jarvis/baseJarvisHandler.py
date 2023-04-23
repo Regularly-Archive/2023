@@ -9,6 +9,8 @@ from conf.appConstants import welcome
 from conf.appConfig import load_config_from_env
 import requests
 import logging, time
+from talk.actionTrigger import trigger
+import os, sys, importlib
 
 class BaseJarvisHandler:
 
@@ -34,6 +36,8 @@ class BaseJarvisHandler:
             self.config['OPENAI_API_KEY'], 
             self.config['OPENAI_API_ENDPOINT'] + '/v1/chat/completions',
         )
+        self.trigger = trigger
+        self.load_plugins()
     
     def onGreet(self, text):
         self.logger.info(f"Jarvis greet you with '{text}'")
@@ -62,6 +66,13 @@ class BaseJarvisHandler:
     
     def awake_by_manual(self):
         self.manual_awake = True
+    
+    def load_plugins(self, plugin_folder='plugins'):
+        sys.path.append(f'./{plugin_folder}')
+        for file in os.listdir(f'./{plugin_folder}'):  
+            fileName = os.path.splitext(file)[0] 
+            importlib.import_module(fileName)
+
         
     def run(self):
         if self.config['PLAY_WELCOME_VOICE']:
@@ -83,8 +94,12 @@ class BaseJarvisHandler:
                     # 当开启语义理解特性时，对输入意图进行分析
                     output = None
                     if self.config['ENABLE_SEMANTIC_ANALYSIS']:
-                        output = self.semantic_extractor.extract(input)
-                    output = self.chat_bot.ask(input)
+                        action = self.semantic_extractor.extract(input)
+                        output = self.trigger.execute(action=action)
+                        if output == None:
+                            output = self.chat_bot.ask(input)
+                    else:
+                        output = self.chat_bot.ask(input)
                     if output== None or output == '':
                         self.onOutputFailed()
                         continue
