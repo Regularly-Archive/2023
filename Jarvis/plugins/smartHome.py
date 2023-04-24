@@ -1,6 +1,6 @@
 from talk.actionTrigger import trigger
 from control.xiaomi import MiServiceController
-from control.windows import shutdown, restart
+from control.windows import shutdown, restart, calc, notepad
 import sys, asyncio
 sys.path.append('..')
 from talk.actionTrigger import trigger
@@ -25,3 +25,13 @@ def shutdown_computer(action):
 def restart_computer(action):
     restart()
     return '已执行重启指令'
+
+@trigger.route(keywords=['打开应用', '打开记事本'])
+def open_notepad(action):
+    notepad()
+    return '已打开记事本'
+
+@trigger.route(keywords=['打开应用', '打开计算器'])
+def open_calc(action):
+    calc()
+    return '已打开计算器'

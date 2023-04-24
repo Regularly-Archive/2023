@@ -35,7 +35,7 @@ class TypeWriterLabel(QLabel):
         self._texts = self.split_text(text, self._split_length)
         self._char_index = 0
         self._line_index = 0
-        self._timer.start(100)
+        self._timer.start(50)
         
     def stop(self):
         self._timer.stop()
@@ -76,7 +76,7 @@ class TypeWriterLabel(QLabel):
         if (total_length < split_length):
             return [text]
         
-        for i in range(int(total_length / split_length)):
+        for i in range(int(total_length / split_length) + 1):
             nextPos = startPos + split_length
             if nextPos >= total_length:
                 nextPos = total_length - 1
