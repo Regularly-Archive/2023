@@ -1,5 +1,6 @@
 from dotenv import load_dotenv, find_dotenv
 from os import environ as env
+from distutils.util import strtobool
 
 def load_config_from_env(env_file=''):
     if env_file == '' or env_file == None:
@@ -15,9 +16,9 @@ def load_config_from_env(env_file=''):
         'OPENAI_API_ENDPOINT': env.get("OPENAI_API_ENDPOINT"),
         'OPENAI_API_KEY': env.get("OPENAI_API_KEY"),
         'OPENAI_API_PROMPT': env.get("OPENAI_API_PROMPT"),
-        'PLAY_WELCOME_VOICE': bool(env.get("PLAY_WELCOME_VOICE")),
-        'ENABLE_CHINESE_CORRECT': bool(env.get('ENABLE_CHINESE_CORRECT')),
-        'ENABLE_SEMANTIC_ANALYSIS': bool(env.get('ENABLE_SEMANTIC_ANALYSIS'))
+        'PLAY_WELCOME_VOICE': eval(env.get("PLAY_WELCOME_VOICE")),
+        'ENABLE_CHINESE_CORRECT': eval(env.get('ENABLE_CHINESE_CORRECT')),
+        'ENABLE_SEMANTIC_ANALYSIS': eval(env.get('ENABLE_SEMANTIC_ANALYSIS'))
     }
 
     return config

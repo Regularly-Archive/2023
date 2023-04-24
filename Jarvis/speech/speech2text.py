@@ -59,6 +59,7 @@ class PaddleSpeechASR:
 
             timestamp = time.strftime('%Y-%m-%d-%H_%M_%S', time.localtime(time.time()))
             file_name = f"./{timestamp}.wav"
+            file_name = os.path.join(Path.home(), file_name)
             
             if keep_audio_file and audio != None:
 

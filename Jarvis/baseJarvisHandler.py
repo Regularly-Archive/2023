@@ -17,7 +17,7 @@ class BaseJarvisHandler:
     def __init__(self, env_file=''):
         self.manual_awake = False
         self.logger = logging.getLogger('BaseJarvisHandler')
-        self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
         self.config = load_config_from_env(env_file)
         self.tts_engine = PaddleSpeechTTS()
         self.awake_engine = PicoWakeWord(self.config['PICOVOICE_API_KEY'], 'Jarvis_en_windows_v2_1_0.ppn')
@@ -89,7 +89,7 @@ class BaseJarvisHandler:
                 else:
                     # 当开启中文纠错特性时，对输入内容进行纠正
                     if self.config['ENABLE_CHINESE_CORRECT']:
-                        input = self.chineses_corrector.currect(input)
+                        input = self.chineses_corrector.correct(input)
                     self.onInputed(input)
                     # 当开启语义理解特性时，对输入意图进行分析
                     output = None
