@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 from speech.async_playsound import playsound_async
-=======
-from playsound import playsound
->>>>>>> c7fea3a575162a6d7d6fbea88863de6ca38ba703
 from baseJarvisHandler import BaseJarvisHandler
 
 class CliJarvisHandler(BaseJarvisHandler):
