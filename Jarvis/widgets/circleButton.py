@@ -20,12 +20,12 @@ class CircleButton(QPushButton):
         rect = self.rect()
         painter.drawEllipse(rect)
 
-    def mousePressEvent(self, event):
-        self.switch_power_status()
+    # def mousePressEvent(self, event):
+    #     self.switch_power_status()
 
     def switch_power_status(self):
         self.is_power_on = not self.is_power_on
-        playsound('.\\resources\\switch.mp3')
+        playsound('.\\resources\\switch.mp3', block=False)
         if self.is_power_on:
             self.setStyleSheet(f"background-color: white; border-radius: {self.radius}px;")
         else:
