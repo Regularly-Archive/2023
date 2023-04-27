@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 
@@ -11,66 +12,67 @@ public class DrawingTest
     private const int MAX_FONT_SIZE = 32;
 
     [TestMethod]
-    [DataRow(200,200,"ÎÒÃÇÊÇ¹²²úÖ÷Òå½Ó°àÈË£¬¼Ì³Ð¸ïÃüÏÈ±²µÄ¹âÈÙ´«Í³£¬°®×æ¹ú°®ÈËÃñ")]
-    [DataRow(300, 300, "ÎÒÃÇÊÇ¹²²úÖ÷Òå½Ó°àÈË£¬¼Ì³Ð¸ïÃüÏÈ±²µÄ¹âÈÙ´«Í³£¬°®×æ¹ú°®ÈËÃñ")]
-    [DataRow(400, 400, "ÎÒÃÇÊÇ¹²²úÖ÷Òå½Ó°àÈË£¬¼Ì³Ð¸ïÃüÏÈ±²µÄ¹âÈÙ´«Í³£¬°®×æ¹ú°®ÈËÃñ")]
-    [DataRow(500, 500, "ÎÒÃÇÊÇ¹²²úÖ÷Òå½Ó°àÈË")]
+    [DataRow(250,80,"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
+    [DataRow(250, 80, "Ö¦ï¿½ï¿½ï¿½ï¿½ï¿½à´µï¿½ï¿½ï¿½Ù£ï¿½ï¿½ï¿½ï¿½ÄºÎ´ï¿½ï¿½Þ·ï¿½ï¿½ï¿½")]
+    [DataRow(250, 80, "ï¿½Ï³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public void Test_DynamicFontSize(int width, int height, string text)
     {
         Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
         Graphics g = Graphics.FromImage(bitmap);
         g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit; ;
 
-        // »æÖÆÔ²ÐÎ
-        var center = new Point(width / 2, height / 2);
-        var radius = width / 2 * 0.6f;
-        var rect = new RectangleF(center.X - radius, center.Y - radius, radius * 2, radius * 2);
-        var pen = new Pen(Color.Red, 1.50f);
-        g.DrawEllipse(pen, rect);
+        //// ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½
+        //var center = new Point(width / 2, height / 2);
+        //var radius = width / 2 * 0.6f;
+        //var rect = new RectangleF(center.X - radius, center.Y - radius, radius * 2, radius * 2);
+        var pen = new Pen(Color.Red, 1.5f);
+        //g.DrawEllipse(pen, rect);
 
-        // »æÖÆ¾ØÐÎ
-        var textPosX = center.X - radius * 0.75f;
-        var textHeight = Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(radius * 0.75f, 2));
-        var textPosY = center.Y - textHeight;
-        var textRect = new RectangleF(textPosX, (float)textPosY, radius * 0.75f * 2f, (float)textHeight * 2f);
+        g.DrawRectangle(new Pen(Color.Black, 1.5f), new RectangleF(0, 0,width- 1, height-1));
+
+        // ï¿½ï¿½ï¿½Æ¾ï¿½ï¿½ï¿½
+        //var textPosX = center.X - radius * 0.75f;
+        //var textHeight = Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(radius * 0.75f, 2));
+        //var textPosY = center.Y - textHeight;
+        var textRect = new RectangleF(10f, 30f, width - 20, height - 60);
         g.DrawRectangle(pen, textRect);
 
-        // »æÖÆÎÄ×Ö
-        var font = new Font("ËÎÌå", 16);
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        var font = new Font("ï¿½ï¿½ï¿½ï¿½", 16);
         var fontSize = ScaleFontSizeByContainerSize(g, text, font, new SizeF(textRect.Width, textRect.Height));
-        g.DrawString(text, new Font("ËÎÌå", fontSize), new SolidBrush(Color.Blue), textRect);
-        g.DrawString($"{width}x{height},fontSize={fontSize}", new Font("ËÎÌå", fontSize), new SolidBrush(Color.Blue), new PointF(0, 0)); 
+        g.DrawString(text, new Font("ï¿½ï¿½ï¿½ï¿½", fontSize), new SolidBrush(Color.Black), textRect);
 
-        // »æÖÆ»·ÐÎÎÄ×Ö
-        float fontSize1 = ScaleFontSizeByPerimeter(g, text, font, radius + 10, 360);
-        Font fontToFit1 = new Font("ËÎÌå", fontSize1, FontStyle.Bold, GraphicsUnit.Pixel);
-        var totalAngle = Math.PI * 2;
-        var stepAngle = totalAngle / (text.Length + 1);
-        var startAngle = 0;
-        for (int i = 0; i < text.Length; i++)
-        {
-            float angle = (float)(startAngle - (i + 1) * stepAngle);
-            if (angle < 0) angle += (float)Math.PI * 2;
-            PointF point = new PointF(center.X + (radius + 10) * (float)Math.Cos(angle), center.Y - (radius + 10) * (float)Math.Sin(angle));
-            g.TranslateTransform(point.X, point.Y);
-            var transformAngle = (float)(angle * 180 / Math.PI + 90);
-            if (transformAngle > 360) transformAngle -= 360;
-            // ×¢Òâ£ºRotateTransform() ·½·¨Ðý×ª·½ÏòÊ±Ë³Ê±Õë£¬ËùÒÔ£¬ÒªÓÃ 360 ¶È¼õÈ¥µ±Ç°½Ç¶È
-            // Ó¡ÕÂÉÏ·½µÄÎÄ×ÖÐèÒªÕý¶Ô×ÅÍâ²à£¬ËùÒÔ£¬ÒªÔÙ¼ÓÉÏ 180 ¶È
-            transformAngle = 360 - transformAngle + 180;
-            g.RotateTransform(transformAngle);
-            g.DrawString(text[i].ToString(), fontToFit1, new SolidBrush(Color.Blue), 0, 0);
-            g.ResetTransform();
-        }
+        //// ï¿½ï¿½ï¿½Æ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //float fontSize1 = ScaleFontSizeByPerimeter(g, text, font, radius, 360);
+        //Font fontToFit1 = new Font("ï¿½ï¿½ï¿½ï¿½", fontSize1, FontStyle.Bold, GraphicsUnit.Pixel);
+        //var totalAngle = Math.PI * 4 / 3;
+        //var stepAngle = totalAngle / (text.Length + 1);
+        //var startAngle = -Math.PI * 5 / 6;
+        //for (int i = 0; i < text.Length; i++)
+        //{
+        //    float angle = (float)(startAngle - (i + 1) * stepAngle);
+        //    if (angle < 0) angle += (float)Math.PI * 2;
+        //    PointF point = new PointF(center.X + (radius + 10) * (float)Math.Cos(angle), center.Y - (radius + 10) * (float)Math.Sin(angle));
+        //    g.TranslateTransform(point.X, point.Y);
+        //    var transformAngle = (float)(angle * 180 / Math.PI + 90);
+        //    if (transformAngle > 360) transformAngle -= 360;
+        //    // ×¢ï¿½â£ºRotateTransform() ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½Ê±Ë³Ê±ï¿½ë£¬ï¿½ï¿½ï¿½Ô£ï¿½Òªï¿½ï¿½ 360 ï¿½È¼ï¿½È¥ï¿½ï¿½Ç°ï¿½Ç¶ï¿½
+        //    // Ó¡ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£¬ï¿½ï¿½ï¿½Ô£ï¿½Òªï¿½Ù¼ï¿½ï¿½ï¿½ 180 ï¿½ï¿½
+        //    transformAngle = 360 - transformAngle + 180;
+        //    g.RotateTransform(transformAngle);
+        //    g.DrawString(text[i].ToString(), fontToFit1, new SolidBrush(Color.Black), 0, 0);
+        //    g.ResetTransform();
+        //}
+
+        g.DrawString($"ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡={fontSize}", new Font("ï¿½ï¿½ï¿½ï¿½", 13), new SolidBrush(Color.Black), new PointF(0, 0));
 
         bitmap.Save($"{width}_{height}_{text}.png");
     }
 
     [TestMethod]
-    [DataRow(800, 600, "ÎÒÃÇÊÇ¹²²úÖ÷Òå½Ó°àÈË£¬¼Ì³Ð¸ïÃüÏÈ±²µÄ¹âÈÙ´«Í³")]
-    [DataRow(400, 300, "ÎÒÃÇÊÇ¹²²úÖ÷Òå½Ó°àÈË£¬¼Ì³Ð¸ïÃüÏÈ±²µÄ¹âÈÙ´«Í³£¬")]
-    [DataRow(1200, 900, "ÎÒÃÇÊÇ¹²²úÖ÷Òå½Ó°àÈË£¬¼Ì³Ð¸ïÃüÏÈ±²µÄ¹âÈÙ´«Í³£¬°®×æ¹ú")]
-    [DataRow(1400, 1200, "ÎÒÃÇÊÇ¹²²úÖ÷Òå½Ó°àÈË£¬¼Ì³Ð¸ïÃüÏÈ±²µÄ¹âÈÙ´«Í³£¬°®×æ¹ú°®ÈËÃñ")]
+    [DataRow(450, 300, "ï¿½ï¿½ï¿½ï¿½ï¿½Ç¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½Ë£ï¿½ï¿½Ì³Ð¸ï¿½ï¿½ï¿½ï¿½È±ï¿½ï¿½Ä¹ï¿½ï¿½Ù´ï¿½Í³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
+    [DataRow(450, 300, "ï¿½ï¿½ï¿½ï¿½ï¿½Ç¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½Ë£ï¿½ï¿½Ì³Ð¸ï¿½ï¿½ï¿½ï¿½È±ï¿½ï¿½Ä¹ï¿½ï¿½Ù´ï¿½Í³")]
+    [DataRow(450, 300, "ï¿½ï¿½ï¿½ï¿½ï¿½Ç¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½")]
     public void Test_TextWithllipse(int width, int height, string text)
     {
         Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
@@ -78,22 +80,45 @@ public class DrawingTest
         g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit; ;
         g.Clear(Color.White);
 
-        // »æÖÆÍÖÔ²
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²
         var center = new Point(width / 2, height / 2);
         var a = width * 0.5f;
         var b = height * 0.5f;
         var rect = new RectangleF(center.X - a, center.Y - b, 2 * a, 2 * b);
-        var pen = new Pen(Color.Red, 1.50f);
+        var pen = new Pen(Color.Red, 3.0f);
         g.DrawEllipse(pen, rect);
 
+        var Radius = rect.Height / 2 * 0.45;
+        var Center = new PointF(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
+        PointF[] points = new PointF[]
+        {
+                    new PointF(Center.X, (float)(Center.Y - Radius)),
+                    new PointF((float)(Center.X + Radius * Math.Sin(72 * Math.PI / 180)), (float)(Center.Y - Radius * Math.Cos(72 * Math.PI / 180))),
+                    new PointF((float)(Center.X + Radius * Math.Sin(36 * Math.PI / 180)), (float)(Center.Y + Radius * Math.Cos(36* Math.PI / 180))),
+                    new PointF((float)(Center.X - Radius * Math.Sin(36 * Math.PI / 180)),(float)( Center.Y + Radius * Math.Cos(36 * Math.PI / 180))),
+                    new PointF((float)(Center.X - Radius * Math.Sin(72 * Math.PI / 180)), (float)(Center.Y - Radius * Math.Cos(72 * Math.PI / 180))),
+        };
 
-        // »æÖÆÍÖÔ²ÎÄ×Ö
-        var font = new Font("ËÎÌå", 16);
+        GraphicsPath path = new GraphicsPath(FillMode.Winding);
+        path.AddLine(points[0], points[2]);
+        path.AddLine(points[2], points[4]);
+        path.AddLine(points[4], points[1]);
+        path.AddLine(points[1], points[3]);
+        path.AddLine(points[3], points[0]);
+        path.CloseFigure();
+
+        g.SmoothingMode = SmoothingMode.AntiAlias;
+        g.RotateTransform(0);
+        g.FillPath(new SolidBrush(Color.Red), path);
+
+
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½
+        var font = new Font("ï¿½ï¿½ï¿½ï¿½", 16);
         float fontSize1 = ScaleFontSizeByPerimeter(g, text, font, a * 0.9f, b * 0.9f, 360);
-        Font fontToFit1 = new Font("ËÎÌå", fontSize1, FontStyle.Bold, GraphicsUnit.Pixel);
-        var totalAngle = Math.PI * 2;
+        Font fontToFit1 = new Font("ï¿½ï¿½ï¿½ï¿½", fontSize1, FontStyle.Bold, GraphicsUnit.Pixel);
+        var totalAngle = Math.PI * 4 / 3;
         var stepAngle = totalAngle / (text.Length + 1);
-        var startAngle = 0;
+        var startAngle = - Math.PI * 5 / 6;
         for (int i = 0; i < text.Length; i++)
         {
             float angle = (float)(startAngle - (i + 1) * stepAngle);
@@ -104,17 +129,17 @@ public class DrawingTest
             g.TranslateTransform(point.X, point.Y);
             var transformAngle = (float)(angle * 180 / Math.PI + 90);
             if (transformAngle > 360) transformAngle -= 360;
-            // ×¢Òâ£ºRotateTransform() ·½·¨Ðý×ª·½ÏòÊ±Ë³Ê±Õë£¬ËùÒÔ£¬ÒªÓÃ 360 ¶È¼õÈ¥µ±Ç°½Ç¶È
-            // Ó¡ÕÂÉÏ·½µÄÎÄ×ÖÐèÒªÕý¶Ô×ÅÍâ²à£¬ËùÒÔ£¬ÒªÔÙ¼ÓÉÏ 180 ¶È
+            // ×¢ï¿½â£ºRotateTransform() ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½Ê±Ë³Ê±ï¿½ë£¬ï¿½ï¿½ï¿½Ô£ï¿½Òªï¿½ï¿½ 360 ï¿½È¼ï¿½È¥ï¿½ï¿½Ç°ï¿½Ç¶ï¿½
+            // Ó¡ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£¬ï¿½ï¿½ï¿½Ô£ï¿½Òªï¿½Ù¼ï¿½ï¿½ï¿½ 180 ï¿½ï¿½
             transformAngle = 360 - transformAngle + 180;
             g.RotateTransform(transformAngle);
-            g.DrawString(text[i].ToString(), fontToFit1, new SolidBrush(Color.Blue), 0, 0);
+            g.DrawString(text[i].ToString(), fontToFit1, new SolidBrush(Color.Red), 0, 0);
             g.ResetTransform();
         }
 
-        g.DrawString($"{width}x{height},fontSize={fontSize1}", new Font("ËÎÌå", fontSize1), new SolidBrush(Color.Blue), new PointF(0, 0));
+        g.DrawString($"ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡={fontSize1}", new Font("ï¿½ï¿½ï¿½ï¿½", 10), new SolidBrush(Color.Black), new PointF(0, 0));
 
-        bitmap.Save($"{width}_{height}_{text}_ÍÖÔ².png");
+        bitmap.Save($"{width}_{height}_{text}_ï¿½ï¿½Ô².png");
 
     }
 
@@ -122,7 +147,7 @@ public class DrawingTest
     {
         var fontSize = font.Size;
 
-        // ¶Ô×ÖÌåËõÐ¡Ê±ÐèÒª¿¼ÂÇ×îÐ¡µÄ×ÖÌå´óÐ¡
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡Ê±ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
         var measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         while (measuredSize.Width > size.Width)
         {
@@ -131,7 +156,7 @@ public class DrawingTest
             measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         }
 
-        // ¶Ô×ÖÌå·Å´óÊ±ÐèÒª¿¼ÂÇ¸ß¶ÈµÄÎÊÌâ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å´ï¿½Ê±ï¿½ï¿½Òªï¿½ï¿½ï¿½Ç¸ß¶Èµï¿½ï¿½ï¿½ï¿½ï¿½
         measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         while (measuredSize.Width < size.Width && measuredSize.Height < size.Height)
         {
@@ -148,7 +173,7 @@ public class DrawingTest
 
         var perimeter = angle * Math.PI * radius / 180;
 
-        // ¶Ô×ÖÌåËõÐ¡Ê±ÐèÒª¿¼ÂÇ×îÐ¡µÄ×ÖÌå´óÐ¡
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡Ê±ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
         var measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         while (measuredSize.Width > perimeter)
         {
@@ -157,7 +182,7 @@ public class DrawingTest
             measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         }
 
-        // ¶Ô×ÖÌå·Å´óÊ±ÐèÒª¿¼ÂÇ¸ß¶ÈµÄÎÊÌâ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å´ï¿½Ê±ï¿½ï¿½Òªï¿½ï¿½ï¿½Ç¸ß¶Èµï¿½ï¿½ï¿½ï¿½ï¿½
         measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         while (measuredSize.Width < perimeter)
         {
@@ -177,7 +202,7 @@ public class DrawingTest
         var c = Math.PI * (a + b) * (1 + (3 * h / (10 + (4 - 3 * h))));
         var perimeter = c * angle / 360;
 
-        // ¶Ô×ÖÌåËõÐ¡Ê±ÐèÒª¿¼ÂÇ×îÐ¡µÄ×ÖÌå´óÐ¡
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡Ê±ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
         var measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         while (measuredSize.Width > perimeter)
         {
@@ -186,7 +211,7 @@ public class DrawingTest
             measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         }
 
-        // ¶Ô×ÖÌå·Å´óÊ±ÐèÒª¿¼ÂÇ¸ß¶ÈµÄÎÊÌâ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å´ï¿½Ê±ï¿½ï¿½Òªï¿½ï¿½ï¿½Ç¸ß¶Èµï¿½ï¿½ï¿½ï¿½ï¿½
         measuredSize = g.MeasureString(text, new Font(font.FontFamily, fontSize));
         while (measuredSize.Width < perimeter)
         {

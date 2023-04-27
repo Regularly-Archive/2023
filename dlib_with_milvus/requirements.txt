@@ -1,0 +1,15 @@
+dlib @ file:///D:/Projects/2023/dlib_with_milvus/dlib-19.22.99-cp39-cp39-win_amd64.whl
+grpcio==1.53.0
+mmh3==3.1.0
+numpy==1.24.3
+opencv-python==4.7.0.72
+pandas==2.0.1
+Pillow==9.5.0
+protobuf==4.22.3
+pymilvus==2.2.7
+python-dateutil==2.8.2
+python-opencv==1.0.0.14
+pytz==2023.3
+six==1.16.0
+tzdata==2023.3
+ujson==5.7.0

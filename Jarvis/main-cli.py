@@ -1,4 +1,4 @@
-from playsound import playsound
+from speech.async_playsound import playsound_async
 from baseJarvisHandler import BaseJarvisHandler
 
 class CliJarvisHandler(BaseJarvisHandler):
@@ -22,8 +22,10 @@ class CliJarvisHandler(BaseJarvisHandler):
     
     def onAwake(self):
         super().onAwake()
-        playsound('.\\resources\\ding.wav')
+        playsound_async('.\\resources\\ding.wav')
 
 if __name__ == '__main__':
     jarvis = CliJarvisHandler()
     jarvis.run()
+
+
