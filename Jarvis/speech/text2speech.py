@@ -5,6 +5,7 @@ from pathlib import Path
 from paddlespeech.cli.tts.infer import TTSExecutor
 import threading
 from .async_playsound import playsound_async
+from .pyaduio_player import PyAudioPlayer
 
 
 class BaiduTTS:
@@ -13,6 +14,7 @@ class BaiduTTS:
         self.API_KEY = API_KEY
         self.SECRET_KEY = SECRET_KEY
         self.client = AipSpeech(self.APP_ID, self.API_KEY, self.SECRET_KEY)
+        self.audio_player = PyAudioPlayer()
 
     def speak(self, text="", speed=5, volume=5, person=3):
         result = self.client.synthesis(text, 'zh', 1, {
@@ -25,7 +27,7 @@ class BaiduTTS:
         if not isinstance(result, dict):
             with open(filePath, "wb") as f:
                 f.write(result)
-            playsound_async(filePath)
+            self.audio_player.play(filePath)
         else:
             print("语音合成失败", result)
         
@@ -47,11 +49,12 @@ class PaddleSpeechTTS:
 
     def __init__(self):
         self.executor = TTSExecutor()
+        self.audio_player = PyAudioPlayer()
 
     def speak(self, text="", lang='mix', model='fastspeech2_male'):
         filePath = os.path.join(Path.home(), "output.mp3")
         self.executor(text=text, output=filePath, am=model, lang=lang)
-        playsound_async(filePath)
+        self.audio_player.play(filePath)
 
 if __name__ == "__main__":
     APP_ID = '32200779'
