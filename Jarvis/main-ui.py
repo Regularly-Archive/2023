@@ -155,7 +155,7 @@ class UiJarvisHandler(BaseJarvisHandler):
     
     def onAwake(self):
         super().onAwake()
-        playsound_async('.\\resources\\ding.wav')
+        super().audio_player.play('.\\resources\\ding.wav')
         payload = {'evt': JarvisEventType.Awake, 'text': '正在聆听，请讲话...' }
         if self.signal != None:
             self.signal.emit(json.dumps(payload))

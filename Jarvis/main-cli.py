@@ -22,7 +22,7 @@ class CliJarvisHandler(BaseJarvisHandler):
     
     def onAwake(self):
         super().onAwake()
-        playsound_async('.\\resources\\ding.wav')
+        super().audio_player.play('.\\resources\\ding.wav')
 
 if __name__ == '__main__':
     jarvis = CliJarvisHandler()
