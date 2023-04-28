@@ -1,6 +1,6 @@
 import sys
 import time
-from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QThread
+from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QThread, QEventLoop
 from PyQt5.QtGui import QPixmap, QPainter, QBrush, QColor, QPen, QPalette, QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QWidget, QLCDNumber
 from PIL import Image, ImageDraw, ImageQt
@@ -9,7 +9,7 @@ from widgets.matplotlibWidget import MatplotlibWidget
 from widgets.typeWriterLabel import TypeWriterLabel
 from widgets.systemMonitorWidget import SystemMonitorWidget
 from baseJarvisHandler import BaseJarvisHandler
-import json, datetime
+import json, datetime, asyncio
 from conf.appConstants import JarvisEventType
 from speech.async_playsound import playsound_async
 
@@ -155,7 +155,7 @@ class UiJarvisHandler(BaseJarvisHandler):
     
     def onAwake(self):
         super().onAwake()
-        super().audio_player.play('.\\resources\\ding.wav')
+        self.play_sound_async('.\\resources\\ding.wav')
         payload = {'evt': JarvisEventType.Awake, 'text': '正在聆听，请讲话...' }
         if self.signal != None:
             self.signal.emit(json.dumps(payload))
@@ -189,5 +189,11 @@ class Worker(QThread):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    loop = QEventLoop(app)
+    asyncio.set_event_loop(loop)
+
     window = MainWindow()
-    sys.exit(app.exec_())
+    # sys.exit(app.exec_())
+
+    with loop:
+        loop.run_forever()

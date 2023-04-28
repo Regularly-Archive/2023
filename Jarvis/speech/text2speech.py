@@ -6,6 +6,7 @@ from paddlespeech.cli.tts.infer import TTSExecutor
 import threading
 from .async_playsound import playsound_async
 from .pyaduio_player import PyAudioPlayer
+import asyncio
 
 
 class BaiduTTS:
@@ -27,7 +28,8 @@ class BaiduTTS:
         if not isinstance(result, dict):
             with open(filePath, "wb") as f:
                 f.write(result)
-            self.audio_player.play(filePath)
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self.audio_player.play(filePath))
         else:
             print("语音合成失败", result)
         
@@ -54,7 +56,8 @@ class PaddleSpeechTTS:
     def speak(self, text="", lang='mix', model='fastspeech2_male'):
         filePath = os.path.join(Path.home(), "output.mp3")
         self.executor(text=text, output=filePath, am=model, lang=lang)
-        self.audio_player.play(filePath)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.audio_player.play(filePath))
 
 if __name__ == "__main__":
     APP_ID = '32200779'

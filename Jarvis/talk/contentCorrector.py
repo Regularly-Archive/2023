@@ -32,8 +32,8 @@ if __name__ == '__main__':
     result = nlpCorrector.correct(text)
     print(f'NLPCorrector:{text} -> {result}')
 
-    OPENAI_API_KEY = 'fk189113-ExIZKcc6jdHhiRMvVRGgjnl3qcxVH5Kr'
-    OPENAI_API_ENDPOINT = 'https://openai.api2d.net/v1/chat/completions'
+    OPENAI_API_KEY = ''
+    OPENAI_API_ENDPOINT = ''
     gptCorrector = ChatGPTCorrector(OPENAI_API_KEY, OPENAI_API_ENDPOINT)
     result = gptCorrector.correct(text)
     print(f'ChatGPTCorrector:{text} -> {result}')
