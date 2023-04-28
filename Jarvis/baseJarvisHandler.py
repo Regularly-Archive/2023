@@ -11,7 +11,7 @@ from conf.appConfig import load_config_from_env
 import requests
 import logging, time
 from talk.actionTrigger import trigger
-import os, sys, importlib
+import os, sys, importlib, asyncio
 
 class BaseJarvisHandler:
 
@@ -75,7 +75,10 @@ class BaseJarvisHandler:
             fileName = os.path.splitext(file)[0] 
             importlib.import_module(fileName)
 
-        
+    def play_sound_async(self, file_name):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.audio_player.play(file_name=file_name))
+
     def run(self):
         if self.config['PLAY_WELCOME_VOICE']:
             tips = welcome()

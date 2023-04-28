@@ -40,17 +40,21 @@ class ChatGPTExtractor:
         self.logger.setLevel(logging.DEBUG)
 
     def extract(self, text):
-        response = self.bot.ask(text)
-        result = json.loads(response)
-        formated_result = json.dumps(result, ensure_ascii=False)
-        self.logger.debug(f'extracting intent via ChatGPT -> {formated_result}')
-        return result
+        try:
+            response = self.bot.ask(text)
+            result = json.loads(response)
+            formated_result = json.dumps(result, ensure_ascii=False)
+            self.logger.debug(f'extracting intent via ChatGPT -> {formated_result}')
+            return result
+        except Exception as e:
+            self.logger.error(e, exc_info=True)
+            return None
 
 
 if __name__ == '__main__':
     text = '刺客信条2的主角叫什么名字'
-    OPENAI_API_KEY = 'fk189113-ExIZKcc6jdHhiRMvVRGgjnl3qcxVH5Kr'
-    OPENAI_API_ENDPOINT = 'https://openai.api2d.net/v1/chat/completions'
+    OPENAI_API_KEY = ''
+    OPENAI_API_ENDPOINT = ''
     gptExtractor = ChatGPTExtractor(OPENAI_API_KEY, OPENAI_API_ENDPOINT)
     result = gptExtractor.extract(text)
     print(result)
