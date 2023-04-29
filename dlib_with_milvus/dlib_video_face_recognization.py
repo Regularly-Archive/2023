@@ -62,6 +62,7 @@ async def process(collection, frame):
 
 async def main():
     video = cv2.VideoCapture('286370351.mp4')
+    # video = cv2.VideoCapture(0)
     fps = video.get(cv2.CAP_PROP_FPS)
 
     while video.isOpened():
@@ -79,4 +80,5 @@ async def main():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

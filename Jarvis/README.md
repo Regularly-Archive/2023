@@ -1,3 +1,5 @@
+https://github.com/nltk/nltk_data
+
 sphinx_kws -ifile fileids.txt -kws kws.txt -di . -do .
 
 安装 Whisper
