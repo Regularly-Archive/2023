@@ -7,6 +7,8 @@ import threading
 from .async_playsound import playsound_async
 from .pyaduio_player import PyAudioPlayer
 import asyncio
+import edge_tts, random
+from edge_tts import VoicesManager
 
 
 class BaiduTTS:
@@ -28,8 +30,8 @@ class BaiduTTS:
         if not isinstance(result, dict):
             with open(filePath, "wb") as f:
                 f.write(result)
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(self.audio_player.play(filePath))
+            
+            playsound_async(filePath)
         else:
             print("语音合成失败", result)
         
@@ -56,8 +58,20 @@ class PaddleSpeechTTS:
     def speak(self, text="", lang='mix', model='fastspeech2_male'):
         filePath = os.path.join(Path.home(), "output.mp3")
         self.executor(text=text, output=filePath, am=model, lang=lang)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.audio_player.play(filePath))
+        playsound_async(filePath)
+
+class EdgeTTS:
+
+    def __init__(self):
+        pass
+
+    async def speak(self, text="", lang='en-US'):
+        voices = await VoicesManager.create()
+        voice = voices.find(Gender="Male", Locale=lang)
+        communicate = edge_tts.Communicate(text, random.choice(voice)["Name"], rate="-5%", volume="+10%")
+        filePath = os.path.join(Path.home(), "output.mp3")
+        await communicate.save(filePath)
+        playsound_async(filePath)
 
 if __name__ == "__main__":
     APP_ID = '32200779'
@@ -67,3 +81,8 @@ if __name__ == "__main__":
     tts.speak('欢迎使用延长自助终端管理系统')
     tts = PaddleSpeechTTS()
     tts.speak('欢迎使用延长自助终端管理系统')
+
+    text = "Allow me to introduce myself. I'm JARVIS, a virtual artificial intelligence, and I'm here to assist you with a variety of tasks as best as I can. 24 hours a day, seven days a week. Importing all preferences from home interface. Begin systems check."
+    tts = EdgeTTS()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(tts.speak(text=text))
