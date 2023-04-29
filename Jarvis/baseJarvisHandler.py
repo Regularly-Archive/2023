@@ -1,5 +1,6 @@
 from speech.speech2text import PaddleSpeechASR
 from speech.wakeword import PicoWakeWord
+from speech.pyaduio_player import PyAudioPlayer
 from speech.text2speech import PaddleSpeechTTS
 from talk.openai import ChatGPTBot
 from talk.contentCorrector import ChatGPTCorrector
@@ -10,7 +11,7 @@ from conf.appConfig import load_config_from_env
 import requests
 import logging, time
 from talk.actionTrigger import trigger
-import os, sys, importlib
+import os, sys, importlib, asyncio
 
 class BaseJarvisHandler:
 
@@ -23,6 +24,7 @@ class BaseJarvisHandler:
         self.awake_engine = PicoWakeWord(self.config['PICOVOICE_API_KEY'], 'Jarvis_en_windows_v2_1_0.ppn')
         self.asr_engine = PaddleSpeechASR()
         self.session = requests.session()
+        self.audio_player = PyAudioPlayer()
         self.chat_bot = ChatGPTBot(
             self.session, 
             self.config['OPENAI_API_KEY'], 
@@ -73,7 +75,10 @@ class BaseJarvisHandler:
             fileName = os.path.splitext(file)[0] 
             importlib.import_module(fileName)
 
-        
+    def play_sound_async(self, file_name):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.audio_player.play(file_name=file_name))
+
     def run(self):
         if self.config['PLAY_WELCOME_VOICE']:
             tips = welcome()

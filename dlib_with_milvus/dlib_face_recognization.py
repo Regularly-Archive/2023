@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 import csv
 import logging
-import uuid, random
+import uuid, random, datetime
 from pymilvus import connections, CollectionSchema, FieldSchema, DataType, Collection, utility
 
 # Logging
@@ -167,7 +167,7 @@ def create_collection(collection_name='faces'):
 
 def create_index(collection, fieldName):
     index_params = {
-        "metric_type":"IP", # LR:欧式距离, IP:内积
+        "metric_type":"L2", # LR:欧式距离, IP:内积
         "index_type":"FLAT",
         "params":{ }
     }
@@ -177,13 +177,13 @@ def create_index(collection, fieldName):
     )
 
 def search_face(collection, feature):
-    search_params = {"metric_type": "IP", "params": {"nprobe": 10}}
+    search_params = {"metric_type": "L2", "params": {"nprobe": 10}}
     
     return collection.search(
         data=[np.array(feature).tolist()],
         anns_field="person_face", 
         param=search_params,
-        limit=20, 
+        limit=300, 
         expr=None,
         output_fields=['person_id','person_name'],
         consistency_level="Strong"
@@ -199,6 +199,8 @@ def main():
 
     collection = Collection(MILVUS_COLLECTION_NAME)
     collection.load()
+
+    start = datetime.datetime.now()
 
     # 加载测试人脸数据
     faces_dir = os.path.abspath(FACES_DIR)
@@ -220,8 +222,10 @@ def main():
             logger.info(f"Process image {image_path} finsihed. Predict：{predict}, Actual：{actual}，Distance：{result[0][1]}")
             if predict == actual:
                 matched_images += 1
-
-    logger.info(f'Correct Rate：{round(matched_images / total_images * 100, 4)}%')
+    
+    end = datetime.datetime.now()
+    duration = str((end-start).seconds)
+    logger.info(f'Total Faces: {total_images}, Correct Rate：{round(matched_images / total_images * 100, 4)}%, Used Time: {duration}s')
 
 if __name__ == '__main__':
     
