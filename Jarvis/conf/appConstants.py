@@ -3,9 +3,9 @@ import random
 from enum import IntEnum
 
 welcome_tips = [
-    # 'Welcome home, sir.',
-    # "For you, sir, always",
-    # 'Always at your service, sir',
+    'Welcome home, sir.',
+    "For you, sir, always",
+    'Always at your service, sir',
     "Allow me to introduce myself. I'm JARVIS, a virtual artificial intelligence, and I'm here to assist you with a variety of tasks as best as I can. 24 hours a day, seven days a week. Importing all preferences from home interface. Begin systems check."
 ]
 
