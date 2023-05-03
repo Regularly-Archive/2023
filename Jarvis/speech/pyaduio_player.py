@@ -83,7 +83,7 @@ class PyAudioPlayer:
             # 检测是否到达音频文件结尾
             if len(data) == 0:
                 break
-
+ 
         self.stream.stop_stream()
         self.stream.close()
         self.audio.terminate()
@@ -99,6 +99,7 @@ class PyAudioPlayer:
     # 停止播放
     def stop(self):
         self.is_stoped = True
+
 
 
 

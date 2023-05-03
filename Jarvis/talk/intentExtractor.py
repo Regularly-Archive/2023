@@ -2,6 +2,7 @@ if __name__ == '__main__':
     import openai
 else:
     from . import openai
+from token import NL
 import requests
 import json, logging
 
@@ -27,7 +28,7 @@ intent_extractor_prompt = '''
     }
     ```
     其中，`query` 字段表示原始查询文本，`intent` 字段表示查询意图，`entities` 字段表示查询中提取的实体信息。
-    在这个示例中，意图为查询，置信度为0.95，实体为人名，值为“许嵩”，起始位置为2，结束位置为4，置信度为0.98。你只需要返回给我这样一段 JSON，不需要任何冗余的信息。我的问题是：
+    在这个示例中，意图为查询，置信度为0.95，实体为人名，值为“许嵩”，起始位置为2，结束位置为4，置信度为0.98。你只需要返回给我这样一段 JSON，不需要任何冗余的信息。需要注意的是，你要对相似的意图进行归类，使用一个统一的意图进行描述。我的问题是：
 '''
 
 class ChatGPTExtractor:
@@ -42,14 +43,15 @@ class ChatGPTExtractor:
     def extract(self, text):
         try:
             response = self.bot.ask(text)
+            if response == None:
+                return None
             result = json.loads(response)
             formated_result = json.dumps(result, ensure_ascii=False)
-            self.logger.debug(f'extracting intent via ChatGPT -> {formated_result}')
+            self.logger.debug(f'Extracting intent of query: {formated_result}')
             return result
         except Exception as e:
             self.logger.error(e, exc_info=True)
             return None
-
 
 if __name__ == '__main__':
     text = '刺客信条2的主角叫什么名字'

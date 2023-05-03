@@ -1,6 +1,6 @@
 from aip import AipSpeech
 import pyttsx3
-import os
+import os, time
 from pathlib import Path
 from paddlespeech.cli.tts.infer import TTSExecutor
 import threading
@@ -65,12 +65,14 @@ class EdgeTTS:
     def __init__(self):
         pass
 
-    async def speak(self, text="", lang='en-US'):
-        voices = await VoicesManager.create()
+    def speak(self, text="", lang='en-US'):
+        loop = asyncio.get_event_loop()
+        voices = loop.run_until_complete(VoicesManager.create())
         voice = voices.find(Gender="Male", Locale=lang)
-        communicate = edge_tts.Communicate(text, random.choice(voice)["Name"], rate="-5%", volume="+10%")
-        filePath = os.path.join(Path.home(), "output.mp3")
-        await communicate.save(filePath)
+        communicate = edge_tts.Communicate(text, voice[0]["Name"], rate="-5%", volume="+10%")
+        timestamp = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+        filePath = os.path.join(Path.home(), f"record_{timestamp}.mp3")
+        loop.run_until_complete(communicate.save(filePath))
         playsound_async(filePath)
 
 if __name__ == "__main__":

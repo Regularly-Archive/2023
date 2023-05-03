@@ -1,15 +1,15 @@
-import pycorrector
+# import pycorrector
 from . import openai
 import requests
 
-class NLPCorrector:
+# class NLPCorrector:
 
-    def __init__(self):
-        pass
+#     def __init__(self):
+#         pass
 
-    def correct(self, text):
-        corrected, details = pycorrector.correct(text)
-        return corrected
+#     def correct(self, text):
+#         corrected, details = pycorrector.correct(text)
+#         return corrected
     
 class ChatGPTCorrector:
     
