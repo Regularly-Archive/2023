@@ -353,3 +353,5 @@ MigrationBackup/
 
 __pycache__/
 dlib_with_milvus/faces/
+dlib_with_milvus/output/0162ef08-02c1-43d7-a423-cc65adbbb98e_Output.jpg
+Jarvis/dist/Jarvis/zmq/backend/cython/message.cp39-win_amd64.pyd
