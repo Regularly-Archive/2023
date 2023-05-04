@@ -7,12 +7,11 @@ from talk.actionTrigger import trigger
 
 async def run(text):
     controller = MiServiceController()
-    result = await controller.execute_text_directive(text)
+    _ = await controller.execute_text_directive(text)
 
 
 @trigger.route(keywords=['控制设备','控制家电','控制家居设备','控制家用设备','控制家居','打开设备'])
 def control_device(action):
-    controller = MiServiceController()
     loop = asyncio.get_event_loop()
     loop.run_until_complete(run(action['query']))
     return '好的，主人，指令已下发。'

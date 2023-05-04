@@ -9,6 +9,7 @@ from .pyaduio_player import PyAudioPlayer
 import asyncio
 import edge_tts, random
 from edge_tts import VoicesManager
+from conf.appConstants import TTSEngineProvider
 
 
 class BaiduTTS:
@@ -74,6 +75,20 @@ class EdgeTTS:
         filePath = os.path.join(Path.home(), f"record_{timestamp}.mp3")
         loop.run_until_complete(communicate.save(filePath))
         playsound_async(filePath)
+
+# 语音合成引擎工厂类
+class TTSEngineFactory:
+
+    @staticmethod
+    def create(config, type):
+        if type == TTSEngineProvider.Baidu:
+            return BaiduTTS(config['BAIDU_APP_ID'], config['BAIDU_APP_KEY'], config['BAIDU_SECRRET_KEY'])
+        elif type == TTSEngineProvider.Pyttsx3:
+            return Pyttsx3TTS()
+        elif type == TTSEngineProvider.PaddleSpeech:
+            return PaddleSpeechTTS()
+        elif type == TTSEngineProvider.Edge:
+            return EdgeTTS()
 
 if __name__ == "__main__":
     APP_ID = '32200779'

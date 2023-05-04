@@ -1,12 +1,12 @@
-from speech.speech2text import BaiduASR
+from speech.speech2text import ASREngineFactory
 from speech.wakeword import PicoWakeWord
 from speech.pyaduio_player import PyAudioPlayer
-from speech.text2speech import EdgeTTS
+from speech.text2speech import TTSEngineFactory
 from talk.openai import ChatGPTBot
 from talk.contentCorrector import ChatGPTCorrector
 from talk.intentExtractor import ChatGPTExtractor
 from os import environ as env
-from conf.appConstants import welcome
+from conf.appConstants import welcome, TTSEngineProvider, ASREngineProvider
 from conf.appConfig import load_config_from_env
 import requests
 import logging, time
@@ -22,9 +22,9 @@ class BaseJarvisHandler:
         self.is_system_ready = False
         self.init_logging()
         self.config = load_config_from_env(env_file)
-        self.tts_engine = EdgeTTS()
+        self.tts_engine = TTSEngineFactory.create(self.config, TTSEngineProvider.Edge)
         self.awake_engine = PicoWakeWord(self.config['PICOVOICE_API_KEY'], 'Jarvis_en_windows_v2_1_0.ppn')
-        self.asr_engine = BaiduASR(self.config['BAIDU_ASR_APP_ID'], self.config['BAIDU_ASR_API_KEY'], self.config['BAIDU_ASR_SECRET_KEY'])
+        self.asr_engine = ASREngineFactory.create(self.config, ASREngineProvider.Baidu)
         self.session = requests.session()
         self.audio_player = PyAudioPlayer()
         self.chat_bot = ChatGPTBot(
