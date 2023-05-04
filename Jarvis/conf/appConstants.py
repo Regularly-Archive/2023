@@ -12,6 +12,7 @@ welcome_tips = [
 def welcome():
     return random.choice(welcome_tips)
 
+# Jarvis 事件/状态定义
 class JarvisEventType(IntEnum):
     Greet = 0
     Awake = 1
@@ -20,3 +21,16 @@ class JarvisEventType(IntEnum):
     OutputFailed = 4
     Outputed = 5
     Idle = 6
+
+# TTS 引擎类型定义
+class TTSEngineProvider(IntEnum):
+    Baidu = 0
+    Pyttsx3 = 1
+    PaddleSpeech = 2
+    Edge = 3
+
+# 语音识别引擎类型定义
+class ASREngineProvider(IntEnum):
+    Baidu = 0
+    PaddleSpeech = 1
+    

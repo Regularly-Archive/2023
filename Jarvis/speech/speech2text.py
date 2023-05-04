@@ -3,6 +3,7 @@ import speech_recognition as sr
 from paddlespeech.cli.asr.infer import ASRExecutor
 from pathlib import Path
 import os, json, time
+from conf.appConstants import ASREngineProvider
 
 
 class BaiduASR:
@@ -52,7 +53,7 @@ class PaddleSpeechASR:
     def recognize_file(self, filePath: str, lang: str = 'zh'):
         return self.executor(audio_file=filePath, lang=lang)
 
-    def recoginze(self, keep_audio_file: bool = True, timeout=60, phrase_time_limit=2):
+    def recoginze(self, keep_audio_file: bool = True, timeout=60, phrase_time_limit=None):
         with sr.Microphone(sample_rate=16000) as source:
             self.recoginzer.adjust_for_ambient_noise(source, duration=1)
             audio = self.recoginzer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
@@ -69,3 +70,12 @@ class PaddleSpeechASR:
             if audio != None:
                 return self.executor(audio_file=file_name)
 
+# 语音识别引擎工厂类
+class ASREngineFactory:
+
+    @staticmethod
+    def create(config, type):
+        if type == ASREngineProvider.Baidu:
+            return BaiduASR(config['BAIDU_APP_ID'], config['BAIDU_APP_KEY'], config['BAIDU_SECRRET_KEY'])
+        elif type == ASREngineProvider.PaddleSpeech:
+            return PaddleSpeechASR()

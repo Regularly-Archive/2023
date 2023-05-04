@@ -9,9 +9,9 @@ def load_config_from_env(env_file=''):
     load_dotenv(find_dotenv(env_file))
 
     config = {
-        'BAIDU_ASR_APP_ID': env.get("BAIDU_ASR_APP_ID"), 
-        'BAIDU_ASR_API_KEY': env.get("BAIDU_ASR_API_KEY"),
-        'BAIDU_ASR_SECRET_KEY': env.get("BAIDU_ASR_SECRET_KEY"),
+        'BAIDU_APP_ID': env.get("BAIDU_APP_ID"), 
+        'BAIDU_API_KEY': env.get("BAIDU_API_KEY"),
+        'BAIDU_SECRET_KEY': env.get("BAIDU_SECRET_KEY"),
         'PICOVOICE_API_KEY': env.get("PICOVOICE_API_KEY"),
         'OPENAI_API_ENDPOINT': env.get("OPENAI_API_ENDPOINT"),
         'OPENAI_API_KEY': env.get("OPENAI_API_KEY"),
