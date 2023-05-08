@@ -1,0 +1,1 @@
+python -m rasa run --enable-api -m models\nlu-20230508-125556-another-light.tar.gz
