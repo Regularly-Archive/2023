@@ -76,6 +76,6 @@ class ASREngineFactory:
     @staticmethod
     def create(config, type):
         if type == ASREngineProvider.Baidu:
-            return BaiduASR(config['BAIDU_APP_ID'], config['BAIDU_APP_KEY'], config['BAIDU_SECRRET_KEY'])
+            return BaiduASR(config['BAIDU_APP_ID'], config['BAIDU_API_KEY'], config['BAIDU_SECRET_KEY'])
         elif type == ASREngineProvider.PaddleSpeech:
             return PaddleSpeechASR()

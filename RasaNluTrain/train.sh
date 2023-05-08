@@ -1,0 +1,1 @@
+python -m rasa train -c sample_configs/config_jieba_mitie_sklearn.yml --data data/examples/rasa/jarvis_rasa_zh.yml nlu

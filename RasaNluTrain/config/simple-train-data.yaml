@@ -1,0 +1,16 @@
+version: "3.1"
+
+nlu:
+- intent: 问候
+  examples: |
+    - 你好
+    - 哈喽
+    - 嘿
+    - 早安
+    - 晚安
+
+
+- intent: 天气
+  examples: |
+    - 明天下雨吗
+    - 今天天气怎么样
