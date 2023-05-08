@@ -61,6 +61,7 @@ pipeline:
   # Scoring function used for evaluating the hyper parameters.
   # This can be a name or a function.
   "scoring_function": "f1_weighted"
+- name: "MitieEntityExtractor"
 - name: "CRFEntityExtractor"
   # BILOU_flag determines whether to use BILOU tagging or not.
   "BILOU_flag": true
@@ -79,4 +80,5 @@ pipeline:
   "split_entities_by_comma":
     address: false
     email: true
+- name: "EntitySynonymMapper"
 assistant_id: 20230508-125550-hushed-interest
