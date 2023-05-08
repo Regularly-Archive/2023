@@ -359,3 +359,7 @@ Jarvis/dist/
 dlib_with_milvus/output/
 Jarvis/build/
 dlib_with_milvus/volumes/
+RasaNluTrain/.rasa/
+RasaNluTrain/data/total_word_feature_extractor_zh.dat
+dlib_with_milvus/286370351.mp4
+RasaNluTrain/models/
