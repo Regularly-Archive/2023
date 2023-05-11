@@ -1,4 +1,5 @@
 language: "zh"
+assistant_id: JarvisBot
 
 pipeline:
 - name: "MitieNLP"
@@ -13,20 +14,20 @@ pipeline:
 # - name: "ner_mitie"
 # - name: "ner_synonyms"
 # # - name: "intent_entity_featurizer_regex"
-- name: "MitieFeaturizer"
-  # Specify what pooling operation should be used to calculate the vector of
-  # the complete utterance. Available options: 'mean' and 'max'.
-  "pooling": "mean"
+# - name: "MitieFeaturizer"
+#   # Specify what pooling operation should be used to calculate the vector of
+#   # the complete utterance. Available options: 'mean' and 'max'.
+#   "pooling": "mean"
 # - name: LanguageModelFeaturizer
 #   # Name of the language model to use
 #   model_name: "bert"
 #   # Pre-Trained weights to be loaded
 #   model_weights: "rasa/LaBSE"
-- name: "RegexFeaturizer"
-  # Text will be processed with case sensitive as default
-  "case_sensitive": true
-  # use match word boundaries for lookup table
-  "use_word_boundaries": true
+# - name: "RegexFeaturizer"
+#   # Text will be processed with case sensitive as default
+#   "case_sensitive": true
+#   # use match word boundaries for lookup table
+#   "use_word_boundaries": true
 - name: "CountVectorsFeaturizer"
   # Analyzer to use, either 'word', 'char', or 'char_wb'
   "analyzer": "word"
@@ -45,40 +46,40 @@ pipeline:
   tol: 0.0001
   random_state: 42
   ranking_length: 10
-- name: "SklearnIntentClassifier"
-  # Specifies the list of regularization values to
-  # cross-validate over for C-SVM.
-  # This is used with the ``kernel`` hyperparameter in GridSearchCV.
-  C: [1, 2, 5, 10, 20, 100]
-  # Specifies the kernel to use with C-SVM.
-  # This is used with the ``C`` hyperparameter in GridSearchCV.
-  kernels: ["linear"]
-  # Gamma parameter of the C-SVM.
-  "gamma": [0.1]
-  # We try to find a good number of cross folds to use during
-  # intent training, this specifies the max number of folds.
-  "max_cross_validation_folds": 5
-  # Scoring function used for evaluating the hyper parameters.
-  # This can be a name or a function.
-  "scoring_function": "f1_weighted"
+# - name: "SklearnIntentClassifier"
+#   # Specifies the list of regularization values to
+#   # cross-validate over for C-SVM.
+#   # This is used with the ``kernel`` hyperparameter in GridSearchCV.
+#   C: [1, 2, 5, 10, 20, 100]
+#   # Specifies the kernel to use with C-SVM.
+#   # This is used with the ``C`` hyperparameter in GridSearchCV.
+#   kernels: ["linear"]
+#   # Gamma parameter of the C-SVM.
+#   "gamma": [0.1]
+#   # We try to find a good number of cross folds to use during
+#   # intent training, this specifies the max number of folds.
+#   "max_cross_validation_folds": 5
+#   # Scoring function used for evaluating the hyper parameters.
+#   # This can be a name or a function.
+#   "scoring_function": "f1_weighted"
+- name: "MitieIntentClassifier"
 - name: "MitieEntityExtractor"
-- name: "CRFEntityExtractor"
-  # BILOU_flag determines whether to use BILOU tagging or not.
-  "BILOU_flag": true
-  # features to extract in the sliding window
-  "features": [["low", "title", "upper"], ["bias", "low", "prefix5", "prefix2", "suffix5", "suffix3", "suffix2", "upper", "title", "digit", "pattern", "text_dense_features"], ["low", "title", "upper"]]
-  # The maximum number of iterations for optimization algorithms.
-  "max_iterations": 50
-  # weight of the L1 regularization
-  "L1_c": 0.1
-  # weight of the L2 regularization
-  "L2_c": 0.1
-  # Name of dense featurizers to use.
-  # If list is empty all available dense features are used.
-  "featurizers": []
-  # Indicated whether a list of extracted entities should be split into individual entities for a given entity type
-  "split_entities_by_comma":
-    address: false
-    email: true
+# - name: "CRFEntityExtractor"
+#   # BILOU_flag determines whether to use BILOU tagging or not.
+#   "BILOU_flag": true
+#   # features to extract in the sliding window
+#   "features": [["low", "title", "upper"], ["bias", "low", "prefix5", "prefix2", "suffix5", "suffix3", "suffix2", "upper", "title", "digit", "pattern", "text_dense_features"], ["low", "title", "upper"]]
+#   # The maximum number of iterations for optimization algorithms.
+#   "max_iterations": 50
+#   # weight of the L1 regularization
+#   "L1_c": 0.1
+#   # weight of the L2 regularization
+#   "L2_c": 0.1
+#   # Name of dense featurizers to use.
+#   # If list is empty all available dense features are used.
+#   "featurizers": []
+#   # Indicated whether a list of extracted entities should be split into individual entities for a given entity type
+#   "split_entities_by_comma":
+#     address: false
+#     email: true
 - name: "EntitySynonymMapper"
-assistant_id: 20230508-125550-hushed-interest
