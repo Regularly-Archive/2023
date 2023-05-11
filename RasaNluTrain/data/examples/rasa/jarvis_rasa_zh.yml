@@ -12,58 +12,92 @@ nlu:
     - 早安
     - 晚安
 
+- intent: goodbye
+  examples: |
+    - 再见
+    - 再会
+    - 回头见
+    - 下次见
+    - 明天见
+    - 慢走不送
+    - 撒由那拉
+    - 拜拜
+    - 拜
+
+- intent: emotion
+  examples: |
+    - 哈哈
+    - 呵呵
+    - 高兴
+    - 喜悦
+    - 哀伤
+    - 快乐
+    - 愤怒
+    - 焦虑
+    - 忧伤
+    - 悲悯
+    - 开心
+    - 失落
+    - 不开心
+    - 不高兴
+    - 不快乐
+    - 爽
+    - 糟
+    - 糟糕
+    - 耶
+
 - intent: query_weather
   examples: |
-    - 今天的天气怎么样
-    - 明天的天气怎么样
-    - 后天的天气怎么样
-    - 今天下雨吗
-    - 明天下雨吗
-    - 后天下雨吗
-    - 今天的气温是多少
-    - 明天的气温是多少
-    - 后天的气温是多少
-    - 帮我查询一下今天的天气
-    - 帮我查询一下明天的天气
-    - 帮我查询一下后天的天气
+    - [今天]{"entity": "date"}的天气怎么样
+    - [明天]{"entity": "date"}的天气怎么样
+    - [后天]{"entity": "date"}的天气怎么样
+    - [今天]{"entity": "date"}下雨吗
+    - [明天]{"entity": "date"}下雨吗
+    - [后天]{"entity": "date"}下雨吗
+    - [今天]{"entity": "date"}的气温是多少
+    - [明天]{"entity": "date"}的气温是多少
+    - [后天]{"entity": "date"}的气温是多少
+    - 帮我查询一下[今天]{"entity": "date"}的天气
+    - 帮我查询一下[明天]{"entity": "date"}的天气
+    - 帮我查询一下[后天]{"entity": "date"}的天气
 
 - intent: query_time
   examples: |
     - 几点了
     - 现在几点
-    - 告诉我时间
-    - 查询时间
+    - 告诉我[时间]{"entity": "time"}
+    - 查询[时间]{"entity": "time"}
 
 - intent: query_date
   examples: |
-    - 今天几号
-    - 明天几号
-    - 后天几号
-    - 今天周几
-    - 明天周几
-    - 后天周几
-    - 今天星期几
-    - 明天星期几
-    - 后天星期几
-    - 查询时间
+    - [今天]{"entity": "date"}几号
+    - [明天]{"entity": "date"}几号
+    - [后天]{"entity": "date"}几号
+    - [今天]{"entity": "date"}周几
+    - [明天]{"entity": "date"}周几
+    - [后天]{"entity": "date"}周几
+    - [今天]{"entity": "date"}星期几
+    - [明天]{"entity": "date"}星期几
+    - [后天]{"entity": "date"}星期几
+    - 查询[日期]{"entity": "date"}
 
 - intent: search_info
   examples: |
-    - 帮我搜索一下[周杰伦]{"entity": "name"}的信息
-    - 帮我查询一下[刺客信条]{"entity": "name"}的资料
-    - 帮我检索一下[许嵩]{"entity": "name"}的情况   
+    - 搜索[周杰伦]{"entity": "name"}的信息
+    - 查询[刺客信条]{"entity": "name"}的资料
+    - 检索[许嵩]{"entity": "name"}的情况   
 
 - intent: control_device
   examples: |
     - 打开[客厅]{"entity": "room"}的[空调]{"entity": "device"}
     - 关闭[客厅]{"entity": "room"}的[空调]{"entity": "device"}
     - 调整[客厅]{"entity": "room"}的[空调]{"entity": "device"}温度为20度
-    - 打开[客厅]{"entity": "room"}主[灯]{"entity": "device"}
-    - 关闭[客厅]{"entity": "room"}主[灯]{"entity": "device"}
-    - 打开[主卧]{"entity": "room"}[灯]{"entity": "device"}
-    - 关闭[主卧]{"entity": "room"}[灯]{"entity": "device"}
-    - 打开[次卧]{"entity": "room"}[灯]{"entity": "device"}
-    - 关闭[次卧]{"entity": "room"}[灯]{"entity": "device"}  
+    - 打开[客厅]{"entity": "room"}[主灯]{"entity": "device"}
+    - 关闭[客厅]{"entity": "room"}[主灯]{"entity": "device"}
+    - 打开[主卧灯]{"entity": "device"}
+    - 关闭[主卧灯]{"entity": "device"}
+    - 打开[次卧灯]{"entity": "device"}
+    - 关闭[次卧灯]{"entity": "device"}  
 
 - intent: control_computer
   examples: |
@@ -73,42 +107,52 @@ nlu:
 
 - intent: search_music
   examples: |
-    - 播放音乐
-    - 播放歌曲[断桥残雪]{"entity": "song"}
-    - 播放[许嵩]{"entity": "artist"}的歌曲[断桥残雪]{"entity": "song"}
-    - 播放[周杰伦]{"entity": "artist"}的歌曲
-    - 播放歌曲
+    - 播放[音乐]{"entity": "music"}
+    - 播放[歌曲]{"entity": "song"}[断桥残雪]{"entity": "name"}
+    - 播放[许嵩]{"entity": "artist"}的[歌曲]{"entity": "song"}[断桥残雪]{"entity": "name"}
+    - 播放[周杰伦]{"entity": "artist"}的[歌曲]{"entity": "song"}
+    - 播放[歌曲]{"entity": "song"}
 
     
 - intent: programming
   examples: |
-    - 帮我写一段关于[线性回归]{"entity": "keyword"}的示例[代码]{"entity": "code"}
-    - 通过编程实现一个求平均数的功能
-    - 写一段计算圆周率的程序[代码]{"entity": "code"}
+    - 编写一个简单的[程序]{"entity": "program"}
+    - 写一段关于[线性回归]{"entity": "keyword"}的示例[代码]{"entity": "code"}
+    - 通过[编程]{"entity": "programming"}实现一个求平均数的功能
+    - [写]{"entity": "action"}[一段]{"entity":"amount"}[计算]{"entity": "action"}[圆周率]{"entity": "math"}的[程序代码]{"entity": "code"}
 
 - intent: execute_cmd
   examples: |
     - 打开[记事本]{"entity": "name"}
-    - 打开[记事本]{"entity": "name"}应用
-    - 打开[记事本]{"entity": "name"}程序
+    - 打开[记事本]{"entity": "name"}[应用]{"entity": "app"}
+    - 打开[记事本]{"entity": "name"}程序{"entity": "program"}
     - 关闭[记事本]{"entity": "name"}
-    - 关闭[记事本]{"entity": "name"}应用
-    - 打开[记事本]{"entity": "name"}程序
+    - 关闭[记事本]{"entity": "name"}应用{"entity": "app"}
+    - 打开[记事本]{"entity": "name"}程序{"entity": "program"}
     - 打开[微信]{"entity": "name"}
-    - 打开[微信]{"entity": "name"}应用
-    - 打开[微信]{"entity": "name"}程序
+    - 打开[微信]{"entity": "name"}应用{"entity": "app"}
+    - 打开[微信]{"entity": "name"}程序{"entity": "program"}
     - 关闭[微信]{"entity": "name"}
-    - 关闭[微信]{"entity": "name"}应用
-    - 关闭[微信]{"entity": "name"}程序    
+    - 关闭[微信]{"entity": "name"}应用{"entity": "app"}
+    - 关闭[微信]{"entity": "name"}程序{"entity": "program"}   
     - 打开[计算器]{"entity": "name"}
-    - 打开[计算器]{"entity": "name"}应用
-    - 打开[计算器]{"entity": "name"}程序
+    - 打开[计算器]{"entity": "name"}应用{"entity": "app"}
+    - 打开[计算器]{"entity": "name"}程序{"entity": "program"}
     - 关闭[计算器]{"entity": "name"}
-    - 关闭[计算器]{"entity": "name"}应用
-    - 关闭[计算器]{"entity": "name"}程序
+    - 关闭[计算器]{"entity": "name"}应用{"entity": "app"}
+    - 关闭[计算器]{"entity": "name"}程序{"entity": "program"}
     - 打开[QQ]{"entity": "name"}
-    - 打开[QQ]{"entity": "name"}应用
-    - 打开[QQ]{"entity": "name"}程序
+    - 打开[QQ]{"entity": "name"}应用{"entity": "app"}
+    - 打开[QQ]{"entity": "name"}程序{"entity": "program"}
     - 关闭[QQ]{"entity": "name"}
-    - 关闭[QQ]{"entity": "name"}应用
-    - 关闭[QQ]{"entity": "name"}程序 
+    - 关闭[QQ]{"entity": "name"}应用{"entity": "app"}
+    - 关闭[QQ]{"entity": "name"}程序{"entity": "program"}
+
+- intent: tell_jokes
+  examples: |
+    - 讲个[笑话]{"entity": "joke"}
+
+- intent: podcasting
+  examples: |
+    - 收听节目
+    - 收听播客
