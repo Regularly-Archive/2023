@@ -5,12 +5,13 @@ pipeline:
 - name: "MitieNLP"
   model: "data/total_word_feature_extractor_zh.dat"
 - name: JiebaTokenizer
+  dictionary_path: "data/jieba/"
   # Flag to check whether to split intents
   "intent_tokenization_flag": false
   # Symbol on which intent should be split
   "intent_split_symbol": "_"
   # Regular expression to detect tokens
-  "token_pattern": Non
+  "token_pattern": None
 # - name: "ner_mitie"
 # - name: "ner_synonyms"
 # # - name: "intent_entity_featurizer_regex"
