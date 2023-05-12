@@ -10,11 +10,6 @@ class ChatGPTBot:
                 "Authorization": f"Bearer {self.api_key}",
             }
             self.session = session
-    
-    def normalize(self, message):
-        # message = message.replace("\n", "")
-        # message = message.replace('\r', "")
-        return message
 
     def ask(self, query):
         try:
@@ -31,7 +26,6 @@ class ChatGPTBot:
                 return None
             else:
                 message = choices[0]["message"]["content"]
-                message = self.normalize(message)
                 return message
         except Exception as e:
             return None
