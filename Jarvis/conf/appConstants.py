@@ -33,4 +33,5 @@ class TTSEngineProvider(IntEnum):
 class ASREngineProvider(IntEnum):
     Baidu = 0
     PaddleSpeech = 1
+    OpenAIWhisper = 2
     

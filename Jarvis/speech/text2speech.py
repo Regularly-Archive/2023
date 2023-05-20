@@ -2,7 +2,6 @@ from aip import AipSpeech
 import pyttsx3
 import os, time
 from pathlib import Path
-from paddlespeech.cli.tts.infer import TTSExecutor
 import threading
 from .async_playsound import playsound_async
 from .pyaduio_player import PyAudioPlayer
@@ -51,7 +50,8 @@ class Pyttsx3TTS:
         self.engine.runAndWait()
 
 class PaddleSpeechTTS:
-
+    from paddlespeech.cli.tts.infer import TTSExecutor
+    
     def __init__(self):
         self.executor = TTSExecutor()
         self.audio_player = PyAudioPlayer()
