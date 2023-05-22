@@ -6,7 +6,7 @@ import datetime, requests, random
 
 logger = logging.getLogger(__name__)
 
-@trigger.route(keywords=['查询时间','询问时间','时间查询'])
+@trigger.route(keywords=['query_time','查询时间','询问时间','时间查询'])
 def report_time(input):
     now = datetime.datetime.now()
     prefix = '上午'
@@ -24,7 +24,7 @@ def report_time(input):
     return f'当前时间是{prefix}{formated}'
 
 
-@trigger.route(keywords=['查询日期','询问日期','日期查询'])
+@trigger.route(keywords=['query_date','查询日期','询问日期','日期查询'])
 def report_date(input):
     now = datetime.datetime.now()
     week_list = ['星期一','星期二','星期三','星期四','星期五','星期六','星期日']

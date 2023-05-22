@@ -17,7 +17,11 @@ class ChatGPTBot:
                 query = self.prompt + query
             self.data = {
                 "model": "gpt-3.5-turbo",
-                "messages": [{"role": "user", "content": query}]
+                "messages": [
+                    # {"role": "system", "content": self.prompt},
+                    # {"role": "assistant", "content": "你可以从信息检索、天气查询、日期查询、时间查询、设备控制、音乐查询、打开应用这些分类中选取最合适的意图。"},
+                    {"role": "user", "content": query}
+                ]
             }
             r = self.session.post(self.api_url, headers=self.headers, json=self.data)
             data = r.json()
