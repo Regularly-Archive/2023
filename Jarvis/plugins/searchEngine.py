@@ -15,14 +15,14 @@ download_folder = os.path.join(Path.home(), 'download')
 
 logger = logging.getLogger('searchEngine')
 
-@trigger.route(keywords=['搜索','检索','查询'])
+@trigger.route(keywords=['search_info','搜索','检索','查询'])
 def search(action):
     entities = list(sorted(action['entities'], key=lambda x:x['confidence'], reverse=True))
     query = entities[0]['value']
     webbrowser.open(f'https://bing.com/search?q={query}')
     return f'已为您检索到关于{query}的内容，请在浏览器中查看。'
 
-@trigger.route(keywords=['播放音乐','搜索音乐'])
+@trigger.route(keywords=['search_music','播放音乐','搜索音乐'])
 def search_music(action):
     entities = list(sorted(action['entities'], key=lambda x:x['confidence'], reverse=True))
     query = entities[0]['value']

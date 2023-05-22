@@ -10,7 +10,7 @@ async def run(text):
     _ = await controller.execute_text_directive(text)
 
 
-@trigger.route(keywords=['控制设备','控制家电','控制家居设备','控制家用设备','控制家居','打开设备'])
+@trigger.route(keywords=['control_device','控制设备','控制家电','控制家居设备','控制家用设备','控制家居','打开设备'])
 def control_device(action):
     loop = asyncio.get_event_loop()
     loop.run_until_complete(run(action['query']))

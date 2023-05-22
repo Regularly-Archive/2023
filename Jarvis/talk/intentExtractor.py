@@ -5,6 +5,7 @@ else:
 from token import NL
 import requests
 import json, logging
+from conf.appConstants import IntentExtractorProvider
 
 intent_extractor_prompt = '''
     我想让你扮演我的自然语言处理工具，当我告诉你一句话的时候，你可以对它进行分词、词法分析、词性分析、上下文分析、主题建模/抽取，
@@ -75,31 +76,43 @@ class RasaExtractor:
             self.logger.error(e, exc_info=True)
             return None
 
+class IntentExtractorFactory:
+
+    @staticmethod
+    def create(config, type):
+        if type == IntentExtractorProvider.OpenAI:
+            return ChatGPTExtractor(config['OPENAI_API_KEY'], config['OPENAI_API_ENDPOINT'])
+        elif type == IntentExtractorProvider.Rasa:
+            return RasaExtractor(config['RASA_NLU_ENDPOINT'])
+
+
 if __name__ == '__main__':
     text = '刺客信条2的主角叫什么名字'
-    OPENAI_API_KEY = ''
-    OPENAI_API_ENDPOINT = ''
-    # gptExtractor = ChatGPTExtractor(OPENAI_API_KEY, OPENAI_API_ENDPOINT)
-    gptExtractor = RasaExtractor()
+    OPENAI_API_KEY = 'fk189113-ExIZKcc6jdHhiRMvVRGgjnl3qcxVH5Kr'
+    OPENAI_API_ENDPOINT = 'https://openai.api2d.net/v1/chat/completions'
+    gptExtractor = ChatGPTExtractor(OPENAI_API_KEY, OPENAI_API_ENDPOINT)
+    # gptExtractor = RasaExtractor()
+    print(text)
     result = gptExtractor.extract(text)
     print(result)
 
-    text = '搜索关于李白的信息'
+    # text = '搜索关于李白的信息'
+    # result = gptExtractor.extract(text)
+    # print(result)
+
+    text = '播放许嵩的歌曲《通关》'
+    print(text)
     result = gptExtractor.extract(text)
     print(result)
 
-    text = '播放许嵩的《通关》这首歌曲'
-    result = gptExtractor.extract(text)
-    print(result)
+    # text = '现在几点了'
+    # result = gptExtractor.extract(text)
+    # print(result)
 
-    text = '现在几点了'
-    result = gptExtractor.extract(text)
-    print(result)
+    # text = '打开有道词典'
+    # result = gptExtractor.extract(text)
+    # print(result)
 
-    text = '打开有道词典'
-    result = gptExtractor.extract(text)
-    print(result)
-
-    text = '帮我给张三写一封信'
-    result = gptExtractor.extract(text)
-    print(result)
+    # text = '帮我给张三写一封信'
+    # result = gptExtractor.extract(text)
+    # print(result)

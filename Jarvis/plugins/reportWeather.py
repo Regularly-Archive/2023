@@ -9,7 +9,7 @@ from os import environ as env
 pinyin = Pinyin()
 logger = logging.getLogger(__name__)
 
-@trigger.route(keywords=['查询天气','询问天气','天气查询'])
+@trigger.route(keywords=['query_weather','查询天气','询问天气','天气查询'])
 def report_weather(action):
     ip_info = get_ip()
     if ip_info != None:
