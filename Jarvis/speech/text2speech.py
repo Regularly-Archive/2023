@@ -8,8 +8,8 @@ from .pyaduio_player import PyAudioPlayer
 import asyncio
 import edge_tts, random
 from edge_tts import VoicesManager
+from paddlespeech.cli.tts.infer import TTSExecutor 
 from conf.appConstants import TTSEngineProvider
-
 
 class BaiduTTS:
     def __init__(self, APP_ID, API_KEY, SECRET_KEY):
@@ -50,8 +50,7 @@ class Pyttsx3TTS:
         self.engine.runAndWait()
 
 class PaddleSpeechTTS:
-    from paddlespeech.cli.tts.infer import TTSExecutor
-    
+
     def __init__(self):
         self.executor = TTSExecutor()
         self.audio_player = PyAudioPlayer()
