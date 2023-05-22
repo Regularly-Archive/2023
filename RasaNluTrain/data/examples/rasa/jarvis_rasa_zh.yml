@@ -60,6 +60,9 @@ nlu:
     - 帮我查询一下[今天]{"entity": "date"}的天气
     - 帮我查询一下[明天]{"entity": "date"}的天气
     - 帮我查询一下[后天]{"entity": "date"}的天气
+    - 我需要准备雨衣吗
+    - 我需要准备雨伞吗
+    - 我需要添一件外套吗
 
 - intent: query_time
   examples: |
@@ -67,6 +70,8 @@ nlu:
     - 现在几点
     - 告诉我[时间]{"entity": "time"}
     - 查询[时间]{"entity": "time"}
+    - 当前时间是什么
+    - 当前时间是几点
 
 - intent: query_date
   examples: |
@@ -80,6 +85,8 @@ nlu:
     - [明天]{"entity": "date"}星期几
     - [后天]{"entity": "date"}星期几
     - 查询[日期]{"entity": "date"}
+    - 当前日期是什么
+    - 当前是哪一天
 
 - intent: search_info
   examples: |

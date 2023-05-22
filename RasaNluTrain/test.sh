@@ -1,1 +1,1 @@
-python -m rasa run --enable-api -m models\nlu-20230508-132535-plain-chateau.tar.gz
+python -m rasa run --enable-api -m models\nlu-20230515-183633-creative-bucket.tar.gz
