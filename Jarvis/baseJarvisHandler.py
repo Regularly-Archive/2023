@@ -24,7 +24,7 @@ class BaseJarvisHandler:
         self.config = load_config_from_env(env_file)
         self.tts_engine = TTSEngineFactory.create(self.config, TTSEngineProvider.PaddleSpeech)
         self.awake_engine = PicoWakeWord(self.config['PICOVOICE_API_KEY'], 'Jarvis_en_windows_v2_1_0.ppn')
-        self.asr_engine = ASREngineFactory.create(self.config, ASREngineProvider.Baidu)
+        self.asr_engine = ASREngineFactory.create(self.config, ASREngineProvider.OpenAIWhisper)
         self.session = requests.session()
         self.audio_player = PyAudioPlayer()
         self.chat_bot = ChatGPTBot(
@@ -103,7 +103,7 @@ class BaseJarvisHandler:
             wake_word_index = self.awake_engine.detect_wake_word()
             if wake_word_index >= 0 or self.manual_awake:
                 self.onAwake()
-                input = self.asr_engine.recoginze(keep_audio_file=True, timeout=60)
+                input = self.asr_engine.recoginze(keep_audio_file=True, timeout=120)
                 if input == None or input == '':
                     self.onInputFailed()
                     continue
