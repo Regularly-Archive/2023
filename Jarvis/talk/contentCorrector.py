@@ -1,15 +1,19 @@
-# import pycorrector
 from . import openai
 import requests
+import importlib
 
-# class NLPCorrector:
+class NLPCorrector:
 
-#     def __init__(self):
-#         pass
+    def __init__(self):
+        self.pycorrector = None
+        try:
+            self.pycorrector = importlib.import_module('pycorrector')
+        except ImportError as e:
+            print("pycorrector is required, run 'pip install pycorrector' first")
 
-#     def correct(self, text):
-#         corrected, details = pycorrector.correct(text)
-#         return corrected
+    def correct(self, text):
+        corrected, details = self.pycorrector.correct(text)
+        return corrected
     
 class ChatGPTCorrector:
     
