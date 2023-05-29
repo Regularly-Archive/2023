@@ -1,18 +1,22 @@
-from aip import AipSpeech
 import speech_recognition as sr
-from paddlespeech.cli.asr.infer import ASRExecutor
 from pathlib import Path
 import os, json, time
+import sys
 from conf.appConstants import ASREngineProvider
-import whisper
+import importlib
 
 
 class BaiduASR:
     def __init__(self, APP_ID, API_KEY, SECRET_KEY):
+        aip = None
+        try:
+            aip = importlib.import_module('aip')
+        except ImportError as e:
+            print("baidu-aip is required, run 'pip install baidu-aip' first")
         self.APP_ID = APP_ID
         self.API_KEY = API_KEY
         self.SECRET_KEY = SECRET_KEY
-        self.client = AipSpeech(self.APP_ID, self.API_KEY, self.SECRET_KEY)
+        self.client = aip.AipSpeech(self.APP_ID, self.API_KEY, self.SECRET_KEY)
         self.recoginzer = sr.Recognizer()
 
     def recognize_file(self, filePath: str, lang: str = 'zh-cn'):
@@ -48,8 +52,13 @@ class BaiduASR:
 class PaddleSpeechASR:
 
     def __init__(self):
+        paddlespeech = None
+        try:
+            paddlespeech = importlib.import_module('paddlespeech.cli.asr.infer')
+        except ImportError as e:
+             print("paddlespeech is required, run 'pip install paddlespeech' first")           
         self.recoginzer = sr.Recognizer()
-        self.executor = ASRExecutor()
+        self.executor = paddlespeech.ASRExecutor()
 
     def recognize_file(self, filePath: str, lang: str = 'zh'):
         return self.executor(audio_file=filePath, lang=lang)
@@ -73,6 +82,11 @@ class PaddleSpeechASR:
 
 class WhisperASR:
     def __init__(self, model_name="base"):
+        whisper = None
+        try:
+            whisper = importlib.import_module('whisper')
+        except ImportError as e:
+            print("openai-whisper is required, run 'pip install openai-whisper' first")
         self.model = whisper.load_model(model_name)
         self.recoginzer = sr.Recognizer()
 
@@ -107,3 +121,4 @@ class ASREngineFactory:
             return PaddleSpeechASR()
         elif type == ASREngineProvider.OpenAIWhisper:
             return WhisperASR()
+    

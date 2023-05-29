@@ -1,22 +1,24 @@
-from aip import AipSpeech
-import pyttsx3
+
 import os, time
 from pathlib import Path
 import threading
 from .async_playsound import playsound_async
 from .pyaduio_player import PyAudioPlayer
 import asyncio
-import edge_tts, random
-from edge_tts import VoicesManager
-from paddlespeech.cli.tts.infer import TTSExecutor 
 from conf.appConstants import TTSEngineProvider
+import importlib
 
 class BaiduTTS:
     def __init__(self, APP_ID, API_KEY, SECRET_KEY):
+        aip = None
+        try:
+            aip = importlib.import_module('aip')
+        except ImportError as e:
+            print("baidu-aip is required, run 'pip install baidu-aip' first")
         self.APP_ID = APP_ID
         self.API_KEY = API_KEY
         self.SECRET_KEY = SECRET_KEY
-        self.client = AipSpeech(self.APP_ID, self.API_KEY, self.SECRET_KEY)
+        self.client = aip.AipSpeech(self.APP_ID, self.API_KEY, self.SECRET_KEY)
         self.audio_player = PyAudioPlayer()
 
     def speak(self, text="", speed=5, volume=5, person=3):
@@ -37,6 +39,11 @@ class BaiduTTS:
         
 class Pyttsx3TTS:
     def __init__(self):
+        pyttsx3 = None
+        try:
+            pyttsx3 = importlib.import_module('pyttsx3')
+        except ImportError as e:
+            print("pyttsx3 is required, run 'pip install pyttsx3' first")
         self.engine = pyttsx3.init()
 
     def speak(self, text="", speed=100, volume=0.6, person=0):
@@ -52,7 +59,12 @@ class Pyttsx3TTS:
 class PaddleSpeechTTS:
 
     def __init__(self):
-        self.executor = TTSExecutor()
+        paddlespeech = None
+        try:
+            paddlespeech = importlib.import_module('paddlespeech.cli.tts.infer')
+        except ImportError as e:
+            print("paddlespeech is required, run 'pip install paddlespeech' first")                  
+        self.executor = paddlespeech.TTSExecutor()
         self.audio_player = PyAudioPlayer()
 
     def speak(self, text="", lang='mix', model='fastspeech2_male'):
@@ -63,13 +75,17 @@ class PaddleSpeechTTS:
 class EdgeTTS:
 
     def __init__(self):
-        pass
+        self.edge_tts = None
+        try:
+            self.edge_tts = importlib.import_module('edge_tts')
+        except ImportError as e:
+            print("edge-tts is required, run 'pip install edge-tts' first")
 
     def speak(self, text="", lang='en-US'):
         loop = asyncio.get_event_loop()
-        voices = loop.run_until_complete(VoicesManager.create())
+        voices = loop.run_until_complete(self.edge_tts.VoicesManager.create())
         voice = voices.find(Gender="Male", Locale=lang)
-        communicate = edge_tts.Communicate(text, voice[0]["Name"], rate="-5%", volume="+10%")
+        communicate = self.edge_tts.Communicate(text, voice[0]["Name"], rate="-5%", volume="+10%")
         timestamp = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
         filePath = os.path.join(Path.home(), f"record_{timestamp}.mp3")
         loop.run_until_complete(communicate.save(filePath))
