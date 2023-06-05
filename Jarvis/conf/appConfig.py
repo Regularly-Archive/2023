@@ -20,7 +20,8 @@ def load_config_from_env(env_file=''):
         'ENABLE_CHINESE_CORRECT': eval(env.get('ENABLE_CHINESE_CORRECT')),
         'ENABLE_SEMANTIC_ANALYSIS': eval(env.get('ENABLE_SEMANTIC_ANALYSIS')),
         'OPENWEATHERMAP_API_KEY': env.get("OPENWEATHERMAP_API_KEY"),
-        'RASA_NLU_ENDPOINT': env.get("RASA_NLU_ENDPOINT")
+        'RASA_NLU_ENDPOINT': env.get("RASA_NLU_ENDPOINT"),
+        'SHERPA_MODEL_PATH': env.get("SHERPA_MODEL_PATH")
     }
 
     return config

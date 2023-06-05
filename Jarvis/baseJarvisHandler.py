@@ -22,9 +22,9 @@ class BaseJarvisHandler:
         self.is_system_ready = False
         self.init_logging()
         self.config = load_config_from_env(env_file)
-        self.tts_engine = TTSEngineFactory.create(self.config, TTSEngineProvider.PaddleSpeech)
+        self.tts_engine = TTSEngineFactory.create(self.config, TTSEngineProvider.Edge)
         self.awake_engine = PicoWakeWord(self.config['PICOVOICE_API_KEY'], 'Jarvis_en_windows_v2_1_0.ppn')
-        self.asr_engine = ASREngineFactory.create(self.config, ASREngineProvider.OpenAIWhisper)
+        self.asr_engine = ASREngineFactory.create(self.config, ASREngineProvider.Sherpa)
         self.session = requests.session()
         self.audio_player = PyAudioPlayer()
         self.chat_bot = ChatGPTBot(

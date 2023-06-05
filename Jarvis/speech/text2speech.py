@@ -85,6 +85,8 @@ class EdgeTTS:
         loop = asyncio.get_event_loop()
         voices = loop.run_until_complete(self.edge_tts.VoicesManager.create())
         voice = voices.find(Gender="Male", Locale=lang)
+        if len(voice) == 0:
+            voice = voices.find(Gender="Male", Locale='en-US')
         communicate = self.edge_tts.Communicate(text, voice[0]["Name"], rate="-5%", volume="+10%")
         timestamp = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
         filePath = os.path.join(Path.home(), f"record_{timestamp}.mp3")
