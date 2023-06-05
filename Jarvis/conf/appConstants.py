@@ -34,6 +34,7 @@ class ASREngineProvider(IntEnum):
     Baidu = 0
     PaddleSpeech = 1
     OpenAIWhisper = 2
+    Sherpa = 3
 
 # 意图提取器类型定义
 class IntentExtractorProvider(IntEnum):

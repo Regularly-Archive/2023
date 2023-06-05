@@ -67,42 +67,21 @@ def main2():
             f.write(audio.get_wav_data())
         
         with wave.open(file_name) as f:
-            # Note: If wave_file_sample_rate is different from
-            # recognizer.sample_rate, we will do resampling inside sherpa-ncnn
-            wave_file_sample_rate = f.getframerate()
-            num_channels = f.getnchannels()
-            assert f.getsampwidth() == 2, f.getsampwidth()  # it is in bytes
             num_samples = f.getnframes()
             samples = f.readframes(num_samples)
             samples_int16 = np.frombuffer(samples, dtype=np.int16)
-            samples_int16 = samples_int16.reshape(-1, num_channels)[:, 0]
             samples_float32 = samples_int16.astype(np.float32)
-
             samples_float32 = samples_float32 / 32768
 
-        # simulate streaming
-            chunk_size = int(0.1 * wave_file_sample_rate)  # 0.1 seconds
-            start = 0
-            while start < samples_float32.shape[0]:
-                end = start + chunk_size
-                end = min(end, samples_float32.shape[0])
-                sherpa_recognizer.accept_waveform(wave_file_sample_rate, samples_float32[start:end])
-                start = end
-                text = sherpa_recognizer.text
-                if text:
-                    result.append(text)
+            sherpa_recognizer.accept_waveform(sherpa_recognizer.sample_rate, samples_float32)
 
-                # simulate streaming by sleeping
-                time.sleep(0.1)
+            tail_paddings = np.zeros(int(sherpa_recognizer.sample_rate * 0.5), dtype=np.float32)
+            sherpa_recognizer.accept_waveform(sherpa_recognizer.sample_rate, tail_paddings)
 
-            tail_paddings = np.zeros(int(wave_file_sample_rate * 0.5), dtype=np.float32)
-            sherpa_recognizer.accept_waveform(wave_file_sample_rate, tail_paddings)
             sherpa_recognizer.input_finished()
-            text = sherpa_recognizer.text
-            if text:
-                result.append(text)
 
-            print(''.join(result))
+            print(sherpa_recognizer.text)
+
 
 
 if __name__ == "__main__":
