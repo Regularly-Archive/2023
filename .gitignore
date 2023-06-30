@@ -363,3 +363,5 @@ RasaNluTrain/.rasa/
 RasaNluTrain/data/total_word_feature_extractor_zh.dat
 dlib_with_milvus/286370351.mp4
 RasaNluTrain/models/
+face-match/statics/eff19b9b170b11ee8406ac50de4e3d08.jpg
+face-match/statics/
