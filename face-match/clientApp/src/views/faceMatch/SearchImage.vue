@@ -7,13 +7,13 @@
       </label>
     </div>
     <div class="grid grid-cols-4 gap-4">
-      <div v-if="previewUrl" class="p-2 relative flex items-center justify-center">
+      <div v-if="previewUrl" class="p-2 relative flex items-center justify-center bg-white">
         <img :src="'http://localhost:8000' + previewUrl" alt="Similar Image" class="w-full h-auto">
         <div class="absolute bottom-0 left-0 bg-black bg-opacity-50 p-4">
           <p class="text-white text-center">当前上传</p>
         </div>
       </div>
-      <div v-for="image in similarImages" :key="image.faceId" class="relative flex items-center justify-center">
+      <div v-for="image in similarImages" :key="image.faceId" class="p-2 relative flex items-center justify-center border-gray">
         <img :src="'http://localhost:8000' + image.faceUrl" alt="Similar Image" class="w-full h-auto">
         <div class="absolute bottom-0 left-0 bg-black bg-opacity-50 p-4">
           <p class="text-white text-center">{{ image.faceLabel }}, 相似度为: {{ ((1 - image.distance) * 100).toFixed(4) }}%</p>

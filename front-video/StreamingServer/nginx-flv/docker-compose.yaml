@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  nginx_http_flv:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: nginx_http_flv
+    ports:
+      - "50001:80"
+      - "60001:1935"
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+    networks:
+      envoymesh:
+networks:
+  envoymesh: {}
