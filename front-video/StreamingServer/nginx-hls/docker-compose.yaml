@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  nginx_hls:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: nginx_hls
+    ports:
+      - "50002:80"
+      - "60002:1935"
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+    networks:
+      envoymesh:
+networks:
+  envoymesh: {}
