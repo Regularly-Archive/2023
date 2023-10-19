@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Text;
 using LibUsbDotNet.DeviceNotify;
 using LibUsbDotNet.DeviceNotify.Linux;
+using LibUsbDotNet.LibUsb;
 
 namespace USBPOC
 {
@@ -76,11 +77,6 @@ namespace USBPOC
             var query = $"SELECT * FROM Win32_PnPEntity WHERE DeviceID LIKE 'USB%VID_{vid}&PID_{pid}%'";
             var searcher = new ManagementObjectSearcher(query);
             var devices = searcher.Get();
-            foreach(var device in devices)
-            {
-                Console.WriteLine("设备Id: " + device.Properties["DeviceId"].Value);
-                Console.WriteLine("设备描述: "+ device.Properties["Description"].Value);
-            }
             return devices.Count > 0;
         }
 
@@ -93,10 +89,12 @@ namespace USBPOC
             {
                 // 被插入的逻辑处理
                 var targetInstance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
+                // \\SNOWFLY-PC\root\cimv2:Win32_PnPEntity.DeviceID="HID\\VID_0000&PID_3825\\6&2BE8ADFA&0&0000"
                 var deviceId = targetInstance.Properties["Dependent"].Value.ToString();
                 var device = new ManagementObject(deviceId);
 
                 var args = new DeviceNotifierEventArgs();
+                // Win32_PnPEntity.DeviceID="HID\\VID_0000&PID_3825\\6&2BE8ADFA&0&0000"
                 args.DeviceId = device.Path.RelativePath.Split("=")[1].Replace("\"", "");
                 args.DevicePath = device.Path.ToString();
                 args.Pid = "0x" + deviceId.Split(new char[] { '&', '\\' }).FirstOrDefault(x => x.StartsWith("PID_")).Replace("PID_", "");
@@ -112,10 +110,12 @@ namespace USBPOC
             {
                 // 被拔出的逻辑处理
                 var targetInstance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
+                // \\SNOWFLY-PC\root\cimv2:Win32_PnPEntity.DeviceID="HID\\VID_0000&PID_3825\\6&2BE8ADFA&0&0000"
                 var deviceId = targetInstance.Properties["Dependent"].Value.ToString();
                 var device = new ManagementObject(deviceId);
 
                 var args = new DeviceNotifierEventArgs();
+                // Win32_PnPEntity.DeviceID="HID\\VID_0000&PID_3825\\6&2BE8ADFA&0&0000"
                 args.DeviceId = device.Path.RelativePath.Split("=")[1].Replace("\"", "");
                 args.DevicePath = device.Path.ToString();
                 args.Pid = "0x" + deviceId.Split(new char[] { '&', '\\' }).FirstOrDefault(x => x.StartsWith("PID_")).Replace("PID_", "");
@@ -124,61 +124,6 @@ namespace USBPOC
                 Console.WriteLine($"设备已拔出 => {JsonConvert.SerializeObject(args)}");
             };
             watcherDelete.Start();
-        }
-
-        private static void UsbDeviceReadWrite(short vid, short pid)
-        {
-            ErrorCode ec = ErrorCode.None;
-
-            var useDeviceFinder = new UsbDeviceFinder(vid, pid);
-            var usbDevice = UsbDevice.OpenUsbDevice(useDeviceFinder);
-
-            IUsbDevice wholeUsbDevice = usbDevice as IUsbDevice;
-            if (!ReferenceEquals(wholeUsbDevice, null))
-            {
-                // This is a "whole" USB device. Before it can be used, 
-                // the desired configuration and interface must be selected.
-
-                // Select config #1
-                wholeUsbDevice.SetConfiguration(1);
-
-                // Claim interface #0.
-                wholeUsbDevice.ClaimInterface(0);
-            }
-
-            // open read endpoint 1.
-            UsbEndpointReader reader = usbDevice.OpenEndpointReader(ReadEndpointID.Ep01);
-
-            // open write endpoint 1.
-            UsbEndpointWriter writer = usbDevice.OpenEndpointWriter(WriteEndpointID.Ep01);
-
-            // Remove the exepath/startup filename text from the begining of the CommandLine.
-            string cmdLine = Regex.Replace(
-                Environment.CommandLine, "^\".+?\"^.*? |^.*? ", "", RegexOptions.Singleline);
-
-            if (!String.IsNullOrEmpty(cmdLine))
-            {
-                int bytesWritten;
-                ec = writer.Write(Encoding.Default.GetBytes(cmdLine), 2000, out bytesWritten);
-                if (ec != ErrorCode.None) throw new Exception(UsbDevice.LastErrorString);
-
-                byte[] readBuffer = new byte[1024];
-                while (ec == ErrorCode.None)
-                {
-                    int bytesRead;
-
-                    // If the device hasn't sent data in the last 100 milliseconds,
-                    // a timeout error (ec = IoTimedOut) will occur. 
-                    ec = reader.Read(readBuffer, 100, out bytesRead);
-
-                    if (bytesRead == 0) throw new Exception("No more bytes!");
-
-                    // Write that output to the console.
-                    Console.Write(Encoding.Default.GetString(readBuffer, 0, bytesRead));
-                }
-
-                Console.WriteLine("\r\nDone!\r\n");
-            }
         }
 
         public static void Main(string[] args)
