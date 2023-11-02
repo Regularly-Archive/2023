@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8">
+    <title>利用 AudioContext 实现音乐频谱可视化</title>
+    <style>
+        body {
+            background: black;
+        }
+
+        canvas,
+        audio {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id='canvas' width="500" height="500"></canvas>
+    <audio id="audio" controls autoplay loop></audio>
+    <script>
+        var audio = document.getElementById('audio');
+        audio.crossOrigin = 'anonymous';
+        audio.src = '忘记时间.mp3';
+        var ctx = new AudioContext();
+        var analyser = ctx.createAnalyser();
+        var audioSrc = ctx.createMediaElementSource(audio);
+
+        audioSrc.connect(analyser);
+        analyser.connect(ctx.destination);
+
+        analyser.fftSize = 512;
+
+        var PI = Math.PI;
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        var cwidth = canvas.width;
+        var cheight = canvas.height;
+        var cr = 230;//环形半径
+        var minHeight = 2;
+        var meterWidth = 5;
+        var meterNum = 180;//设置方块的数量，考虑到闭环的关系
+        var gradient = ctx.createLinearGradient(0, -cr, 0, -cwidth / 2);
+        gradient.addColorStop(0, '#0f0');
+        gradient.addColorStop(0.5, '#ff0');
+        gradient.addColorStop(1, '#f00');
+        ctx.fillStyle = gradient;
+
+        function render() {
+            var array = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(array);
+            var step = Math.round(array.length / meterNum);
+            ctx.clearRect(0, 0, cwidth, cheight);
+            ctx.save();
+            ctx.translate(cwidth / 2, cheight / 2);
+            for (var i = 0; i < meterNum; i++) {
+                //ctx.save();
+                var value = array[i * step];
+                var meterHeight = value * (cheight / 2 - cr) / 256 || minHeight;
+                ctx.rotate(2 * PI / meterNum);
+                ctx.fillRect(-meterWidth / 2, -cr - meterHeight, meterWidth, meterHeight);
+                //ctx.restore();
+            }
+            ctx.restore();
+            requestAnimationFrame(render);
+        }
+        render();
+    </script>
+</body>
+
+</html>

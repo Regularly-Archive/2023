@@ -4,7 +4,7 @@
 <title>直播系统</title>
 </head>
 <body style="position:relative; text-align:center; top:20px;">
-	<video id="videoElement" controls autoplay></video>
+	<video id="videoElement" controls autoplay width="100%" height="100%"></video>
 </body>
 
 <script src="https://cdn.bootcdn.net/ajax/libs/flv.js/1.5.0/flv.min.js"></script>
@@ -13,9 +13,8 @@
         var videoElement = document.getElementById('videoElement');
         var flvPlayer = flvjs.createPlayer({
             type: 'flv',
-            // 如果是直播流需要设置这个值为 true
             isLive:true,
-            // 拉流示例地址，stream参数一定要和推流时所设置的流密钥一致，app是推流的uri
+            enableStashBuffer: false,
             url: 'http://192.168.14.191:50001/pullLive?port=1935&app=pushLive&stream=test'
         });
         flvPlayer.attachMediaElement(videoElement);

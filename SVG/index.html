@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .rectangle {
+            position: absolute;
+            width: 150px;
+            height: 35px;
+            background-color: #ddd;
+            border-radius: 5px;
+        }
+
+        .rectangle::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #ddd;
+        }
+
+        .rectangle .content {
+            line-height: 30px;
+            width: 100%;
+            text-align: center;
+            margin-top: 2.5px;
+            margin-bottom: 2.5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="popup" class="rectangle" style="display: none;"></div>
+    <div class="container"></div>
+    <script>
+        const popup = document.getElementById('popup');
+
+        fetch('China.svg')
+            .then(res => res.text())
+            .then(text => {
+                const container = document.getElementsByClassName('container')[0];
+                container.innerHTML = text;
+
+                // 允许SVG交互
+                const svg = document.getElementsByTagName('svg')[0];
+                svg.setAttribute('pointer-events', 'cursor');
+
+                // 为每一个路径绑定事件
+                const paths = svg.childNodes[0].childNodes;
+                for (var i = 0; i < paths.length; i++) {
+                    paths[i].onclick = function (e) {
+                        alert(`${e.target.id}`)
+                    };
+                    paths[i].onmouseover = function (e) {
+                        e.target.setAttribute('fill', 'red');
+                        popup.innerHTML = `<div class="content">${e.target.id}</div>`
+                        popup.style.left = `${e.x - 75}px`;
+                        popup.style.top = `${e.y - 45}px`;
+                        popup.style.display = 'block'
+                    };
+                    paths[i].onmouseout = function (e) {
+                        e.target.setAttribute('fill', '#eee');
+                        popup.style.display = 'none'
+                    };
+                }
+            })
+    </script>
+</body>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8">
+    <title>利用 AudioContext 实现音乐频谱可视化</title>
+    <style>
+        body {
+            background: black;
+        }
+
+        canvas,
+        audio {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id='canvas' width="500" height="500"></canvas>
+    <audio id="audio" controls autoplay loop></audio>
+    <script>
+        var audio = document.getElementById('audio');
+        audio.crossOrigin = 'anonymous';
+        audio.src = '忘记时间.mp3';
+        var ctx = new AudioContext();
+        var analyser = ctx.createAnalyser();
+        var audioSrc = ctx.createMediaElementSource(audio);
+
+        audioSrc.connect(analyser);
+        analyser.connect(ctx.destination);
+
+        analyser.fftSize = 512;
+
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        var cwidth = canvas.width;
+        var cheight = canvas.height - 2;
+        var meterWidth = 5; //方块的宽度
+        var gap = 2; //方块的间距
+        var minHeight = 2;
+        var meterNum = cwidth / (meterWidth + gap);//根据宽度和间距计算出可以放多少个方块
+        var capHeight = 0;
+
+        var gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0,'red');
+        gradient.addColorStop(0.2,'orange');
+        gradient.addColorStop(0.4,'tomato');
+        gradient.addColorStop(0.6,'yellow');
+        gradient.addColorStop(0.8,'brown');
+        gradient.addColorStop(1,'gray');
+        ctx.fillStyle = gradient;//填充
+        //ctx.fillStyle = 'rgba(255,255,255,.5)';//填充
+
+        function render() {
+            var array = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(array);
+            var step = Math.round(array.length / meterNum);//从频谱数据中每隔step均匀取出meterNum个数据
+            ctx.clearRect(0, 0, cwidth, cheight);
+            for (var i = 0; i < meterNum; i++) {
+                var value = array[i * step];
+                ctx.fillRect(i * (meterWidth + gap), cheight - value + capHeight, meterWidth, cheight || minHeight); //绘制
+            }
+            requestAnimationFrame(render);
+        }
+        render();
+    </script>
+</body>
+
+</html>

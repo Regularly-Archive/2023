@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<head>
+    <style>
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .rectangle {
+            position: absolute;
+            width: 150px;
+            height: 35px;
+            background-color: #ddd;
+            border-radius: 5px;
+        }
+
+        .rectangle::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #ddd;
+        }
+
+        .rectangle .content {
+            line-height: 30px;
+            width: 100%;
+            text-align: center;
+            margin-top: 2.5px;
+            margin-bottom: 2.5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="popup" class="rectangle" style="display: none;"></div>
+    <div class="container">
+        <img src="Demo-01.jpg" usemap="#imageMap" style="width: 600px; height: 315px">
+        <map name="imageMap"></map>
+    </div>
+    <script>
+        const popup = document.getElementById('popup');
+        const imageMap = document.getElementsByName('imageMap')[0];
+
+        const areas = [{
+            key: '半泽直树',
+            shape: 'rect',
+            coords: [0, 0, 308.5, 315]
+        }, {
+            key: '大和田',
+            shape: 'circle',
+            coords: [418, 134, 157.5]
+        }]
+
+        areas.forEach(area => {
+            let ele = document.createElement('area');
+            ele.shape = area.shape;
+            ele.coords = area.coords.join(',')
+            ele.setAttribute('data-key', area.key);
+            ele.onclick = function (e) {
+                alert(e.target.dataset.key);
+            };
+            ele.onmousemove = function (e) {
+                popup.innerHTML = `<div class="content">${e.target.dataset.key}</div>`;
+                popup.style.left = `${e.x - 75}px`;
+                popup.style.top = `${e.y - 45}px`;
+                popup.style.display = 'block'
+            };
+            ele.onmouseover = function (e) {
+                popup.style.display = 'display';
+            };
+            imageMap.appendChild(ele)
+        })
+    </script>
+</body>
