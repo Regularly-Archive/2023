@@ -1,0 +1,32 @@
+{
+  "name": "edge-tts-js",
+  "version": "1.0.0",
+  "description": "A implementation of edge-tts for JavaScript",
+  "type": "module",
+  "main": "dist/edge-tts.cjs.js",
+  "module": "dist/edge-tts.esm.js",
+  "browser": "dist/edge-tts.browser.js",
+  "iife": "dist/edge-tts.iife.js",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "keywords": [
+    "edge-tts"
+  ],
+  "author": "qinyuanpei",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "babel-loader": "^9.1.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.2",
+    "@babel/preset-env": "^7.23.2",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "babel-core": "^6.26.3",
+    "rollup": "^4.3.0"
+  }
+}
