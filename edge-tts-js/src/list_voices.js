@@ -1,11 +1,11 @@
 import { VOICE_LIST } from "./constant"
-import axios from "axios";
 
 const list_voices = function() {
-    var options = {
-        'method': 'GET',
-        'url': VOICE_LIST,
-        'headers': {
+    const data = fetch(VOICE_LIST,{
+        mode: "cors",
+        method: 'GET',
+        credentials: 'include',
+        headers: {
             "Authority": "speech.platform.bing.com",
             "Sec-CH-UA": '" Not;A Brand";v="99", "Microsoft Edge";v="91", "Chromium";v="91"',
             "Sec-CH-UA-Mobile": "?0",
@@ -17,19 +17,19 @@ const list_voices = function() {
             "Accept-Encoding": "gzip, deflate, br",
             "Accept-Language": "en-US,en;q=0.9",
         }
-    };
-    axios.get(options).then(res => {
-        return res
-    }).catch(error => {
-        throw new Error(error)
     })
+    .then(res => res.json())
+    .catch(error => console.error(error))
+
+    return data
 }
+
 export class VoicesManager {
     static voices = []
     static called_create = false
 
     static create() {
-        const voiceManager = new VoiceManager();
+        const voiceManager = new VoicesManager();
         voiceManager.voices = list_voices()
         for (let voice of voiceManager.voices) {
             voice['Language'] = voice['Locale'].split("-")[0]

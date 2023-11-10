@@ -14,23 +14,23 @@ export default {
   input: './index.js',
   output: [
     {
-      file: `./dist/${pkg.main}`,
+      file: `./${pkg.main}`,
       format: 'cjs',
       footer,
     },
     {
-      file: `./dist/${pkg.module}`,
+      file: `./${pkg.module}`,
       format: 'esm',
       footer,
     },
     {
-      file: `./dist/${pkg.browser}`,
+      file: `./${pkg.browser}`,
       format: 'umd',
       name: 'Dry',
       footer,
     },
     {
-      file: `./dist/${pkg.iife}`,
+      file: `./${pkg.iife}`,
       format: 'iife',
       name: 'Dry',
       footer,
@@ -41,5 +41,6 @@ export default {
     resolve(),
     babel({ babelHelpers: 'bundled' }),
     commonjs(),
-  ]
+  ],
+  external: ["axios"],
 }
