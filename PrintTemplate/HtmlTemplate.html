@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>打印模板</title>
+    <style>
+        .header {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .qrcode {
+            float: right;
+            margin-right: 25px;
+        }
+
+        .qrcode img {
+            width: 75px;
+            height: 75px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+
+        .footer {
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="qrcode">
+            <img src="{{ qrcode }}"/>
+        </div>
+        <h1>XXX公司公路出库单</h1>
+    </div>
+    <div class="second-header">
+        <div style="float: left; margin-bottom: 5px;">客户单位：{{ unit }}</div>
+        <div style="float: right;margin-bottom: 5px;">提货日期: {{ pickupDate }}</div>
+    </div>
+    <table>
+        <tr>
+            <td>订单号：</td>
+            <td>{{ orderNo }}</td>
+            <td>流水号：</td>
+            <td>{{ transNo }}</td>
+        </tr>
+        <tr>
+            <td>发货地点：</td>
+            <td>{{ location }}</td>
+            <td>产品名称：</td>
+            <td>{{ productName }}</td>
+        </tr>
+        <tr>
+            <td>车牌号：</td>
+            <td>{{ carNo }}</td>
+            <td>应发数量(件)：</td>
+            <td>{{ planAmount }}</td>
+        </tr>
+        <tr>
+            <td>驾驶员：</td>
+            <td>{{ driverName }}</td>
+            <td>实发数量(件)：</td>
+            <td>{{ actualAmount }}</td>
+        </tr>
+        <tr>
+            <td>备注：</td>
+            <td colspan="3">{{ remark }}</td>
+        </tr>
+    </table>
+</body>
+</html>
