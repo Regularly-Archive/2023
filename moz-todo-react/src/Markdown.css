@@ -1,0 +1,14 @@
+.box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.box > .column {
+    flex: 1;
+    height: 100vh;
+    padding: 10px 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+    overflow: auto;
+}

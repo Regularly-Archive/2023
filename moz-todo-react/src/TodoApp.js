@@ -7,8 +7,24 @@ import "./TodoApp.css";
 import { nanoid } from "nanoid";
 
 export default function TodoApp(props) {
-  const [tasks, setTasks] = useState(props.tasks);
+  const [tasks, setTasks] = useState(props.tasks || []);
+  const [filter, setFilter] = useState("All");
 
+  const filterMap = {
+    All: () => true,
+    Todo: (task) => !task.completed,
+    Done: (task) => task.completed,
+  }
+  const filterNames = Object.keys(filterMap);
+  const filterButtons = filterNames.map((name) => (
+    <FilterButton 
+      key={name} 
+      name={name}
+      isPressed={name === filter}
+      setFilter={setFilter}
+    />
+  ));
+  
   function addTask(name) {
     const newTask = { id: `todo-${nanoid()}`, name, completed: false };
     setTasks([...tasks, newTask]);
@@ -29,7 +45,19 @@ export default function TodoApp(props) {
     setTasks(remainingTasks);
   }
 
-  const taskList = tasks.map((task) => (
+  function editTask(id, newName) {
+    const editedTaskList = tasks.map((task) => {
+      if (id === task.id) {
+        return { ...task, name: newName };
+      }
+      return task;
+    });
+    setTasks(editedTaskList);
+  }
+  
+  const taskList = tasks
+    .filter(filterMap[filter])
+    .map((task) => (
     <Todo
       id={task.id}
       name={task.name}
@@ -37,6 +65,7 @@ export default function TodoApp(props) {
       key={task.id}
       toggleTaskCompleted={toggleTaskCompleted}
       deleteTask={deleteTask}
+      editTask={editTask}
     />
   ));
 
@@ -48,9 +77,7 @@ export default function TodoApp(props) {
       <h1>TodoMatic</h1>
       <Form addTask={addTask} />
       <div className="filters btn-group stack-exception">
-        <FilterButton />
-        <FilterButton />
-        <FilterButton />
+        { filterButtons }
       </div>
       <h2 id="list-heading">{ headingText }</h2>
       <ul
