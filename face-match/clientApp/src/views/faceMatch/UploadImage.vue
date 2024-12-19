@@ -1,5 +1,6 @@
 <template>
   <div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">人脸上传</h1>
     <div class="max-w-2xl mx-auto">
       <!-- Upload Section -->
       <div class="mb-8">
@@ -19,9 +20,12 @@
       <!-- Preview and Form -->
       <div v-if="previewUrl" class="space-y-6">
         <div class="relative overflow-hidden rounded-lg shadow-lg">
-          <img :src="previewUrl" 
-               alt="Preview" 
-               class="w-full h-64 object-cover">
+          <img 
+              :src="previewUrl" 
+              alt="Preview" 
+              class="w-full h-64 object-cover cursor-pointer"
+              @click="showPreview(previewUrl)"
+          >
         </div>
 
         <!-- Label Input -->
@@ -30,7 +34,7 @@
           <input type="text" 
                  id="image-label" 
                  v-model="imageLabel"
-                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                 class="mt-1 block w-full rounded-md border border-blue-400 shadow-sm focus:border-blue-600 hover:border-blue-600 sm:text-sm h-12 px-2"
                  placeholder="请输入图片标签">
         </div>
 
@@ -67,13 +71,25 @@
         </button>
       </div>
     </div>
+
+    <!-- Image Preview Modal -->
+    <ImagePreviewModal 
+      :isVisible="isModalVisible" 
+      :imageUrl="modalImageUrl" 
+      @close="isModalVisible = false" 
+    />
   </div>
+  
 </template>
 
 <script>
+import ImagePreviewModal from '@/components/ImagePreviewModal.vue';
 const axios = require('axios').default;
 
 export default {
+  components: {
+    ImagePreviewModal
+  },
   data() {
     return {
       previewUrl: null,
@@ -81,7 +97,9 @@ export default {
       selectedFile: null,
       isLoading: false,
       error: null,
-      successMessage: null
+      successMessage: null,
+      isModalVisible: false,
+      modalImageUrl: ''
     };
   },
   methods: {
@@ -117,10 +135,9 @@ export default {
 
       const formData = new FormData();
       formData.append('image', this.selectedFile);
-      formData.append('label', this.imageLabel);
 
       try {
-        await axios.post('http://localhost:8000/upload', formData, {
+        await axios.post(`http://localhost:8000/faces/upload?label=${this.imageLabel}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -140,6 +157,10 @@ export default {
       this.selectedFile = null;
       this.previewUrl = null;
       this.imageLabel = '';
+    },
+    showPreview(imageUrl) {
+      this.modalImageUrl = imageUrl;
+      this.isModalVisible = true;
     }
   }
 };

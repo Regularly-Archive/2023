@@ -1,5 +1,6 @@
 <template>
   <div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">以图搜图</h1>
     <!-- Upload Section -->
     <div class="mb-8">
       <div class="flex flex-col items-center">
@@ -33,14 +34,19 @@
     <!-- Results Grid -->
     <div v-if="!isLoading && (previewUrl || similarImages.length > 0)" class="space-y-6">
       <!-- Preview Section -->
-      <div v-if="previewUrl" class="mb-8">
-        <h2 class="text-xl font-semibold mb-4">上传的图片</h2>
-        <div class="relative group overflow-hidden rounded-lg shadow-lg">
-          <img :src="'http://localhost:8000' + previewUrl" 
-               alt="Uploaded Image" 
-               class="w-full h-64 object-cover">
-          <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-            <p class="text-white font-medium">参考图片</p>
+      <div v-if="previewUrl" class="mb-8 flex justify-center">
+        <div class="w-1/3">
+          <h2 class="text-xl font-semibold mb-4">上传的图片</h2>
+          <div class="relative group overflow-hidden rounded-lg shadow-lg transition-transform duration-300 hover:scale-105">
+            <img 
+              :src="'http://localhost:8000' + previewUrl" 
+              alt="Uploaded Image" 
+              class="w-full h-64 object-cover cursor-pointer"
+              @click="showPreview('http://localhost:8000' + previewUrl)"
+            >
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+              <p class="text-white font-medium">参考图片</p>
+            </div>
           </div>
         </div>
       </div>
@@ -54,7 +60,9 @@
                class="relative group overflow-hidden rounded-lg shadow-lg transition-transform duration-300 hover:scale-105">
             <img :src="'http://localhost:8000' + image.faceUrl" 
                  :alt="image.faceLabel" 
-                 class="w-full h-64 object-cover">
+                 class="w-full h-64 object-cover cursor-pointer"
+                 @click="showPreview('http://localhost:8000' + image.faceUrl)"
+            >
             <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
               <p class="text-white font-medium">{{ image.faceLabel }}</p>
               <p class="text-white/90 text-sm">
@@ -65,32 +73,43 @@
         </div>
       </div>
     </div>
+
+    <!-- Image Preview Modal -->
+    <ImagePreviewModal 
+      :isVisible="isModalVisible" 
+      :imageUrl="modalImageUrl" 
+      @close="isModalVisible = false" 
+    />
   </div>
 </template>
 
 <script>
+import ImagePreviewModal from '@/components/ImagePreviewModal.vue';
 const axios = require('axios').default;
 
 export default {
+  components: {
+    ImagePreviewModal
+  },
   data() {
     return {
       similarImages: [],
       previewUrl: undefined,
       isLoading: false,
-      error: null
+      error: null,
+      isModalVisible: false,
+      modalImageUrl: ''
     };
   },
   methods: {
     async handleFileChange(event) {
       const file = event.target.files[0];
       
-      // Validate file type
       if (!file.type.match('image.*')) {
         this.error = '请上传图片文件（JPG, PNG）';
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         this.error = '图片大小不能超过5MB';
         return;
@@ -102,7 +121,7 @@ export default {
       formData.append('image', file);
 
       try {
-        const response = await axios.post('http://localhost:8000/search?top=5&threshold=0.25', formData, {
+        const response = await axios.post('http://localhost:8000/faces/search?top=10&threshold=0.25', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -117,6 +136,10 @@ export default {
         this.isLoading = false;
       }
     },
+    showPreview(imageUrl) {
+      this.modalImageUrl = imageUrl;
+      this.isModalVisible = true;
+    }
   },
 };
 </script>

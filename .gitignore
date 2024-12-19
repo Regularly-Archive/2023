@@ -367,3 +367,5 @@ face-match/statics/eff19b9b170b11ee8406ac50de4e3d08.jpg
 face-match/statics/
 face-match/.venv/
 Jarvis/.venv/
+face-match/docker/volumes/
+face-match/face_match.db

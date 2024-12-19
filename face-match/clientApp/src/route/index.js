@@ -24,6 +24,11 @@ const route = new VueRouter({
                     path: '/upload',
                     name: 'Upload',
                     component: () => import('@/views/faceMatch/UploadImage.vue'),
+                },
+                {
+                    path: '/manage',
+                    name: 'Manage',
+                    component: () => import('@/views/faceMatch/ImageManagement.vue'),
                 }
             ]
         }
